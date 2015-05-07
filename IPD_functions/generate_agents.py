@@ -7,9 +7,13 @@ def generate_agents(count= 64 , maxStates=8,allMax=False):
     for i in range(count):
         if allMax: states=maxStates
         else: states=r.randint(1,maxStates)
-        #agent=[1,r.randint(0,1)] +sum([[r.randint(0,1),r.randint(1,states),r.randint(1,states)] for j in range(states)], []) # the sum flattens the list        
-        agent=[1,r.randint(0,1)] +sum([[1,1,1] for j in range(states)], []) #hawks
+        
+        joss_ann_parameters=(r.random(),r.random()) #1 not included but [0,1) is isomorphic to [0,1] luckily! ..right?
+
+        #agent=[1,joss_ann_parameters] +sum([[1,1,1] for j in range(states)], []) #generates only hawks
+        agent=[1,joss_ann_parameters] +sum([[r.randint(0,1),r.randint(1,states),r.randint(1,states)] for j in range(states)], []) # the sum flattens the list 
         result[i]=agent
+        #print agent
         
     return result
     

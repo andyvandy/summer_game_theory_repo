@@ -6,9 +6,11 @@ from IPD_utilities import pretty_print
 
 import random as r
 import json                     # for d3 drawing
+import collections              # for data tracking
 import networkx as nx           # for making graphs
 from networkx.readwrite import json_graph #more d3
 import http_server  #more d3
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -46,14 +48,14 @@ DEBUG=False
 def main():
     game_matrix=[[3,3],[0,5],[5,0],[1,1]] 
     number_of_agents=64
-    maxStates=12
+    maxStates=16
     startStates=1
     allMax=True # whether or not all agents will have the max number of states
-    rounds=128
-    generations=300
+    rounds=150
+    generations=1000
     w=0.98 #probability of game going on another turn
-    noise=0.00 # % of moves which are incorrectly played/transmitted ect
-    evolution_settings=(25,14,0) #(breed,survive,newcommers)
+    noise=True # use Joss_ann noise or not
+    evolution_settings=(25,13,1) #(breed,survive,newcommers)
     
     agents=generate_agents(count= number_of_agents , maxStates=startStates,allMax=True)
     (result,ranks,stats)= run_simulation(agents,game=game_matrix,count=number_of_agents, evol=evolution_settings, rounds=rounds,w=w,generations=generations,startStates=startStates,maxStates=maxStates,allMax=allMax,noise=noise)
@@ -65,19 +67,12 @@ def main():
     drawToBrowser(result,stats)
     
 
-    #returns the agents' respective scores
-    R1,S1,T1,P1=game[0][0],game[1][0],game[2][0],game[3][0]
-    R2,T2,S2,P2=game[0][1],game[1][1],game[2][1],game[3][1]
-    score1= moves.count((0,0))*R1+moves.count((0,1))*S1+moves.count((1,0))*T1+moves.count((1,1))*P1
-    score2= moves.count((0,0))*R2+moves.count((1,0))*S2+moves.count((0,1))*T2+moves.count((1,1))*P2 
-    return (score1,score2)
-
    
         
 
-def run_simulation(agents,game,evol,count=64,rounds=100,w=0.9,generations=100 ,startStates=2,maxStates=8,allMax=False,noise=0.05):
+def run_simulation(agents,game,evol,count=64,rounds=100,w=0.9,generations=100 ,startStates=2,maxStates=8,allMax=False,noise=True):
     #returns a tuple,feeds into main
-    simulationStats=[[],[0]]
+    simulationStats=[[],[0],[],[],[]]
     lastGen=False
     for i in range(generations):
         if i%25==24: print "Generation " +str(i+1)
@@ -85,7 +80,9 @@ def run_simulation(agents,game,evol,count=64,rounds=100,w=0.9,generations=100 ,s
         
         (agents,topScores,stats)=run_generation(agents,game,count=count,rounds=rounds,w=w,evol=evol,startStates=startStates,maxStates=maxStates,allMax=allMax,noise=noise,lastGen=lastGen)
         simulationStats[0].append(stats[0])
-        
+        simulationStats[2].append(stats[2])
+        simulationStats[3].append(stats[3])
+        simulationStats[4].append(stats[4])
         #average size of strategy grows since extra genetic material doesn't seem to have an adverse effect, interesting in relation to DNA
         #totalStates=0
         #for agent in agents:
@@ -130,7 +127,10 @@ def drawToBrowser(graphList,stats):
         d["directed"]=1
         d["multigraph"]=1
         data1[str(i+1)]=d
-        data2.append({"text": str(i+1),"value": str(i+1)})
+        j1,j2=round(graphList[i][1][0],4),round(graphList[i][1][1],4)
+        if j1+j2 >1: j1,j2=(1-j1,1-j2)
+        text=str(i+1)+" - ("+str(j1)+","+str(j2)+")"
+        data2.append({"text": text,"value": str(i+1)})
             
        # print d
     data={"0":data1,
@@ -149,16 +149,29 @@ def drawToBrowser(graphList,stats):
 
 def drawCharts(stats):
     sns.set(style="darkgrid", palette="muted")
-    fig= plt.subplots(1,1, figsize=(4, 3))
+    fig= plt.subplots(1,1, figsize=(3.5, 2.8))
     b, g, r, p = sns.color_palette("muted", 4)
     ax = sns.tsplot(stats[0],  color=g)
-    ax.set( ylabel="average score per round")
-    ax.set_xlabel("generation")
+    ax.set( ylabel="Average score per turn")
+    ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom=0.22)
     
     #pylab.figure(figsize=(4,3), dpi=80)
     #pylab.plot( range(generations),stats[0])
-    plt.savefig("historical.png")    
+    plt.savefig("historical.png") 
+    plt.clf()
+    plt.cla()
+    sns.set(style="darkgrid", palette="muted")
+    fig= plt.subplots(1,1, figsize=(4, 3))
+    b, g, r, p = sns.color_palette("muted", 4)
+    data=np.dstack([[1-j for j in stats[i]]  for i in range(2,5)]) # 1- to flip the y axis
+    ax = sns.tsplot(data,color=[g,b,r])
+    ax.set( ylabel="Average sentience")
+    ax.set_xlabel("Generation")
+    plt.gcf().subplots_adjust(bottom=0.22)
+    plt.savefig("sentience.png") 
+    return 
+    
     
 def createGraphFromList(graph):
     #takes a string as input and outputs a Networkx graph object

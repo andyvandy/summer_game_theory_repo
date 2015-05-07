@@ -1,4 +1,5 @@
 import sys 
+import random as r
 
 def tally_score(moves,game):
     #returns the agents' respective scores
@@ -17,7 +18,6 @@ def tally_score(moves,game):
     for i in range(turns):
         #the states are updated based off of the other agent's last move
         #print moves[i]
-        
         try:player1[0]=player1[player1[0]*3+moves[i][1]]
         except: 
             #used for debugging faulty mutation mechanism
@@ -50,16 +50,34 @@ def tally_score(moves,game):
     return(tally_score(moves,game)) 
     
     
-def play_game(agent1,agent2,game,turns=100,allMax=False,noise=0.05):
+def play_game(agent1,agent2,game,turns=100,allMax=False,noise=True):
     
     # takes as input two agent strategies as strings returns their respective scores
-    player1=[int(i) for i in agent1]
-    player2=[int(i) for i in agent2]
-    #print player1, player2
-    moves=[(player1[2],player2[2])]
-    for i in range(turns-1): # the first turn occurs right before this loop
+    player1=[i for i in agent1]
+    player2=[i for i in agent2]
+    #print player1
+    if sum(player1[1]) <=1:joss_ann1=(player1[1][0],player1[1][0]+player1[1][0])
+    else: joss_ann1=(1-player1[1][0],2-player1[1][0]-player1[1][0])
+    if sum(player2[1]) <=1:joss_ann2=(player2[1][0],player2[1][0]+player2[1][0])
+    else: joss_ann2=(1-player2[1][0],2-player2[1][0]-player2[1][0])
+    if noise==False:
+        joss_ann1,joss_ann2=(0,0),(0,0) 
+    moves=[]
+    
+    for i in range(turns): # the first turn occurs right before this loop
         #the states are updated based off of the other agent's last move
-        #print moves[i]
+        p1rand=r.random()
+        p2rand=r.random()
+        if p1rand<=joss_ann1[0] and p2rand<=joss_ann2[0]:       moves.append((0,0))
+        elif p1rand<=joss_ann1[1] and p2rand<=joss_ann2[0]:     moves.append((1,0))
+        elif p2rand<=joss_ann2[0]:                              moves.append((player1[player1[0]*3-1],0))
+        elif p1rand<=joss_ann1[0] and p2rand<=joss_ann2[1]:     moves.append((0,1))
+        elif p1rand<=joss_ann1[1] and p2rand<=joss_ann2[1]:     moves.append((1,1))
+        elif  p2rand<=joss_ann2[1]:                             moves.append((player1[player1[0]*3-1],1))
+        elif p1rand<=joss_ann1[0]:                              moves.append((0,player2[player2[0]*3-1]))
+        elif p1rand<=joss_ann1[1]:                              moves.append((1,player2[player2[0]*3-1]))
+        else:                                                   moves.append((player1[player1[0]*3-1],player2[player2[0]*3-1]))
+        #TODO: lol this definitely needs someone else's double checking
         
         try:player1[0]=player1[player1[0]*3+moves[i][1]]
         except: 
@@ -79,17 +97,23 @@ def play_game(agent1,agent2,game,turns=100,allMax=False,noise=0.05):
             print moves[-1][0]
             print moves
             sys.exit("error occurred in play_game 2 ")
-        try:moves.append((player1[player1[0]*3-1],player2[player2[0]*3-1]))
-        except: 
-            print"check your mutation logic"
-            print player1,player2
-            sys.exit("error occurred in play_game 3")
         if moves[i] not in [(0,0),(0,1),(1,0),(1,1)]: 
             print "p1", player1
             print "p2", player2
             print moves,moves[i] ,moves[i][0]
-            sys.exit("error occurred in play_game 4")
+            sys.exit("error occurred in play_game 3")
         
+    p1rand=r.random()
+    p2rand=r.random()
+    if p1rand<=joss_ann1[0] and p2rand<=joss_ann2[0]:       moves.append((0,0))
+    elif p1rand<=joss_ann1[1] and p2rand<=joss_ann2[0]:     moves.append((1,0))
+    elif p2rand<=joss_ann2[0]:                              moves.append((player1[player1[0]*3-1],0))
+    elif p1rand<=joss_ann1[0] and p2rand<=joss_ann2[1]:     moves.append((0,1))
+    elif p1rand<=joss_ann1[1] and p2rand<=joss_ann2[1]:     moves.append((1,1))
+    elif  p2rand<=joss_ann2[1]:                             moves.append((player1[player1[0]*3-1],1))
+    elif p1rand<=joss_ann1[0]:                              moves.append((0,player2[player2[0]*3-1]))
+    elif p1rand<=joss_ann1[1]:                              moves.append((1,player2[player2[0]*3-1]))
+    else:                                                   moves.append((player1[player1[0]*3-1],player2[player2[0]*3-1]))
     return(tally_score(moves,game))
     
     
@@ -103,6 +127,7 @@ def test_game_logic():
     assert tally_score(moves2, game) == (12,12)
     assert tally_score(moves3, game) == (14,9)
     
+    #TODO need to rewrite these test cases using r.seed() for new agent format
     agent1=[1,0,1,1,1]
     agent2=[1,0,1,1,1]
     agent3=[1,0,0,1,1]
@@ -116,5 +141,5 @@ def test_game_logic():
     assert play_game(agent4,agent6,game,turns=12)==(22,27)
     return 'test passes'
 
-print test_game_logic()    
+#print test_game_logic()    
 
