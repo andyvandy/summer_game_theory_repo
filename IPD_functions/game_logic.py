@@ -7,8 +7,50 @@ def tally_score(moves,game):
     score1= moves.count((0,0))*R1+moves.count((0,1))*S1+moves.count((1,0))*T1+moves.count((1,1))*P1
     score2= moves.count((0,0))*R2+moves.count((1,0))*S2+moves.count((0,1))*T2+moves.count((1,1))*P2 
     return (score1,score2)
-
-def play_game(agent1,agent2,game,turns=100):
+    # takes as input two agent strategies as strings returns their respective scores
+    player1=[i for i in agent1] #doing this since straight up assignment gives a pointer which messes stuff up.. BADLY
+    player2=[i for i in agent2]
+    #print player1, player2
+    moves=[(player1[2],player2[2])]
+    #print player1
+    #print player2
+    for i in range(turns):
+        #the states are updated based off of the other agent's last move
+        #print moves[i]
+        
+        try:player1[0]=player1[player1[0]*3+moves[i][1]]
+        except: 
+            #used for debugging faulty mutation mechanism
+            # the first number can vary here as it is used to track the player's current state
+            print"check your mutation logic"
+            print "p1", player1
+            print "p2", player2
+            print moves[-1][1]
+            print moves
+            sys.exit("error occurred in play_game")
+        try:player2[0]=player2[player2[0]*3+moves[i][0]]
+        except: 
+            print"check your mutation logic"
+            print "p1", player1
+            print "p2", player2
+            print moves[-1][0]
+            print moves
+            sys.exit("error occurred in play_game")
+        try:moves.append((player1[player1[0]*3-1],player2[player2[0]*3-1]))
+        except: 
+            print"check your mutation logic"
+            print player1,player2
+            exit("error occurred in play_game")
+        if moves[i] not in [(0,0),(0,1),(1,0),(1,1)]: 
+            print "p1", player1
+            print "p2", player2
+            print moves,moves[i] ,moves[i][0]
+            sys.exit("error occurred in play_game")
+    
+    return(tally_score(moves,game)) 
+    
+    
+def play_game(agent1,agent2,game,turns=100,allMax=False,noise=0.05):
     
     # takes as input two agent strategies as strings returns their respective scores
     player1=[int(i) for i in agent1]

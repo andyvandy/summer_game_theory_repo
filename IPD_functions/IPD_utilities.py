@@ -13,3 +13,6 @@ def pretty_print(list,entriesPerLine=4):
     #send line to output, here I will just print it
     print line
     
+def getKey(item):
+    #helper function for run_generation
+    return item[1] 
