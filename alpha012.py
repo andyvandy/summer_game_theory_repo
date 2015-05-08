@@ -51,10 +51,10 @@ def main():
     maxStates=16
     startStates=1
     allMax=True # whether or not all agents will have the max number of states
-    rounds=150
-    generations=1000
+    rounds=10
+    generations=500
     w=0.98 #probability of game going on another turn
-    noise=True # use Joss_ann noise or not
+    noise=False # use Joss_ann noise or not
     evolution_settings=(25,13,1) #(breed,survive,newcommers)
     
     agents=generate_agents(count= number_of_agents , maxStates=startStates,allMax=True)
