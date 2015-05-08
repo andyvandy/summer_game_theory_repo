@@ -56,10 +56,10 @@ def play_game(agent1,agent2,game,turns=100,allMax=False,noise=True):
     player1=[i for i in agent1]
     player2=[i for i in agent2]
     #print player1
-    if sum(player1[1]) <=1:joss_ann1=(player1[1][0],player1[1][0]+player1[1][0])
-    else: joss_ann1=(1-player1[1][1],2-player1[1][0]-player1[1][0]) # trippy geometry explains why we swap the values in this one
-    if sum(player2[1]) <=1:joss_ann2=(player2[1][0],player2[1][0]+player2[1][0])
-    else: joss_ann2=(1-player2[1][1],2-player2[1][0]-player2[1][0])
+    if sum(player1[1]) <=1.0:joss_ann1=(player1[1][0],player1[1][1]+player1[1][0])
+    else: joss_ann1=(1-player1[1][1],2-player1[1][0]-player1[1][1]) # trippy geometry explains why we swap the values in this one
+    if sum(player2[1]) <=1.0:joss_ann2=(player2[1][0],player2[1][0]+player2[1][1])
+    else: joss_ann2=(1-player2[1][1],2-player2[1][1]-player2[1][0])
     if noise==False:
         joss_ann1,joss_ann2=(0,0),(0,0) 
     moves=[]

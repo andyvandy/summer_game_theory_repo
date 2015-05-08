@@ -51,13 +51,13 @@ def main():
     maxStates=16
     startStates=1
     allMax=True # whether or not all agents will have the max number of states
-    rounds=150
+    rounds=20
     generations=1000
     w=0.98 #probability of game going on another turn
-    noise=True # use Joss_ann noise or not
+    noise=False # use Joss_ann noise or not
     evolution_settings=(25,13,1) #(breed,survive,newcommers)
     
-    agents=generate_agents(count= number_of_agents , maxStates=startStates,allMax=True)
+    agents=generate_agents(count= number_of_agents , maxStates=startStates,allMax=True,noise=False)
     (result,ranks,stats)= run_simulation(agents,game=game_matrix,count=number_of_agents, evol=evolution_settings, rounds=rounds,w=w,generations=generations,startStates=startStates,maxStates=maxStates,allMax=allMax,noise=noise)
     simulationResults=zip(result,ranks,stats[1])
     pretty_print(simulationResults,entriesPerLine=1)
@@ -128,8 +128,9 @@ def drawToBrowser(graphList,stats):
         d["multigraph"]=1
         data1[str(i+1)]=d
         j1,j2=round(graphList[i][1][0],4),round(graphList[i][1][1],4)
-        if j1+j2 >1: j1,j2=(1-j1,1-j2)
-        text=str(i+1)+" - ("+str(j1)+","+str(j2)+")"
+        jay1,jay2=j1,j2
+        if j1+j2 >1: jay1,jay2=(1-j2,1-j1)
+        text=str(i+1)+" - ("+str(jay1)+","+str(jay2)+")"
         data2.append({"text": text,"value": str(i+1)})
             
        # print d
@@ -149,7 +150,7 @@ def drawToBrowser(graphList,stats):
 
 def drawCharts(stats):
     sns.set(style="darkgrid", palette="muted")
-    fig= plt.subplots(1,1, figsize=(3.5, 2.8))
+    fig= plt.subplots(1,1, figsize=(4, 2.5))
     b, g, r, p = sns.color_palette("muted", 4)
     ax = sns.tsplot(stats[0],  color=g)
     ax.set( ylabel="Average score per turn")

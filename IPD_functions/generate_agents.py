@@ -1,6 +1,6 @@
 import random as r
 
-def generate_agents(count= 64 , maxStates=8,allMax=False):
+def generate_agents(count= 64 , maxStates=8,allMax=False,noise=True):
     # this function generates a list of agents in the following format:
     #    {current state}{initial move} [{move for this state}{new state if coop}{new state if defect}] for each state
     result=[[] for i in range(count)]
@@ -9,7 +9,8 @@ def generate_agents(count= 64 , maxStates=8,allMax=False):
         else: states=r.randint(1,maxStates)
         
         joss_ann_parameters=(r.random(),r.random()) #1 not included but [0,1) is isomorphic to [0,1] luckily! ..right?
-
+        if noise==False:
+            joss_ann_parameters=(0,0)
         #agent=[1,joss_ann_parameters] +sum([[1,1,1] for j in range(states)], []) #generates only hawks
         agent=[1,joss_ann_parameters] +sum([[r.randint(0,1),r.randint(1,states),r.randint(1,states)] for j in range(states)], []) # the sum flattens the list 
         result[i]=agent

@@ -55,8 +55,8 @@ def run_generation(agents,game,evol,count=64,rounds=100,w=0.9,maxStates=8,allMax
             defect_prob_total+=agent[1][1]
         else:
             sentience+=2-sum(agent[1])
-            coop_prob_total+=1-agent[1][0]
-            defect_prob_total+=1-agent[1][1]
+            coop_prob_total+=1-agent[1][1]
+            defect_prob_total+=1-agent[1][0]
     avg_sentience=float(sentience)/count
     avg_hard_coop=float(coop_prob_total)/count
     avg_hard_defect=float(defect_prob_total)/count
@@ -112,11 +112,14 @@ def reproduce(agent,allMax=False,maxStates=8):
     elif 9<mutation<25 and states<maxStates:
         #add a state
         listAgent+= [r.randint(0,1),r.randint(1,states+1),r.randint(1,states+1)] 
-    elif 24<mutation <45  or 100<mutation <165 and False:
-        # change the joss_ann noise parameters +-0.1
-        j1,j2=(max(min(listAgent[1][0]-0.1 +0.2*r.random(),1.0),0.0),max(min(listAgent[1][1]-0.1 +0.2*r.random(),1.0),0.0))
+    elif 24<mutation <45  or 99<mutation <121:
+        # change the defect joss_ann noise parameters +-0.1
+        j1,j2=(listAgent[1][0],max(min(listAgent[1][1]-0.1 +0.2*r.random(),1.0),0.0))
         listAgent[1]=[j1,j2]
-        #if sum(listAgent[1]) >1: listAgent[1]=[1-j1,1-j2]
+    elif 120<mutation <161:
+        # change the  coop joss_ann noise parameters +-0.1
+        j1,j2=(max(min(listAgent[1][0]-0.1 +0.2*r.random(),1.0),0.0),listAgent[1][1])
+        listAgent[1]=[j1,j2]
     elif 44<mutation<60:
         # change the state move
         listAgent[mutationState*3 -1] = int(not listAgent[mutationState*3 -1])
