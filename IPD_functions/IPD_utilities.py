@@ -12,5 +12,14 @@ def pretty_print(list, entries_per_line=4):
     print line
     
 def get_key(item):
+    """A very complex function.
+    
+    Args:
+        item: an item
+        
+    Returns:
+        item[1]: the second value in item
+    """
+
     #helper function for run_generation
     return item[1] 

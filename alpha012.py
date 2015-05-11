@@ -28,7 +28,9 @@ Note from Stuart:
     the server starts, you can access it at http://localhost:8000/graph009.html
 
 TODO:
-    -make the sim end with a full gen played but skip the last reproduction so that all the strategies can be ranked and ordered
+    -create an agent class, will help with building history and family trees
+    -make the sim end with a full gen played but skip the last reproduction so 
+     that all the strategies can be ranked and ordered
     -interactive charts?
     -log a history?
     -add family trees across time?
@@ -58,6 +60,15 @@ import seaborn as sns
 DEBUG = False
     
 def main():
+    """Main loop.
+    1. Initializes variables.
+    2. Generates agents.
+    3. Runs simulation.
+    4. Creates webpage.
+    """
+
+    # TODO: load all of these parameters from a file
+
     # represents the value of choices
     game_matrix = [[3, 3], [0, 5], [5, 0], [1, 1]] 
     number_of_agents = 64
@@ -94,9 +105,29 @@ def main():
 def run_simulation(agents, game, evol, count=64, rounds=100, w=0.9, 
                    generations=100, start_states=2, max_states=8, all_max=False,
                    noise=True):
+    """
+    Runs the simulation.
 
-    # returns a tuple,feeds into main
-    simulation_stats = [[], [0], [], [], []]
+    Args:
+        agents: the list of agents
+        game: the game matrix
+        evol: a list of evolution settings (breed, survive, newcomers)
+        count: the number of agents
+        rounds: ???
+        w: the probability of the game going on another turn
+        generations: the number of generations
+        start_states: ???
+        max_states: the maximum number of states
+        all_max: whether or not the agents will all have the maximum number of
+            states
+        noise: whether or not to use Joss-Ann noise
+
+    Returns:
+        (agents, top_scores, stats): a tuple containing the final agent list,
+            top scores, and statistics
+    """
+
+    simulation_stats = [[], [0], [], [], []] # what is this?
     last_gen = False
     for i in range(generations):
         if i % 25 == 24: print "Generation " + str(i + 1)

@@ -5,20 +5,38 @@ from game_logic import *
 
 
 def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
-    # need to check the shuffling closely to make sure everything is going 
-    # alright, could  also likely be sped up
-    # takes as input a list of agents and a game length parameter and pairs 
-    # agents off to go play a game so that each agent plays one game per round
-    # all games are of the same length in a given round, the strategies 
-    # shouldn't be affected.
-    # returns a list of scores in the same order as the list of agents was given.
+    """Pairs agents off to go play a game so that each agent plays one game per
+    round. All games are of the same length in a given round, the strategies
+    shouldn't be affected.
+    
+    Args:
+        agents: the list of agents
+        game: the game matrix
+        w: the probability of the game going on another turn
+        max_states: the maximum number of states
+        all_max: whether or not the agents will all have the maximum number of
+            states
+        noise: whether or not to use Joss-Ann noise
+
+    Returns:
+        round_info: a list of scores in the same order as the list of agents was
+            given
+
+    Notes:
+        - Need to check the shuffling closely to make sure everything is going
+          alright.
+        - Could likely be sped up
+    """
+
     shuffled_numbers = range(len(agents))
     r.shuffle(shuffled_numbers)
     order_assignment = zip(agents, shuffled_numbers)
-    #print order_assignment
+    # print order_assignment
     scores = [0] * len(agents)
-    #calculates how many turns for the round using an exponential distribution
+    # calculates how many turns for the round using an exponential distribution
     turns = int(round(r.expovariate(1 - w))) + 1 
+    
+    # I have a feeling that this is the slow bit -Stu
     for i in [2 * j for j in range(len(agents) / 2)]:
         index1, index2 = [y[1] for y in order_assignment].index(i), [y[1] for y in order_assignment].index(i + 1)
         (player1, player2) = order_assignment[index1][0], order_assignment[index2][0]
@@ -32,8 +50,26 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
 def run_generation(agents, game, evol, count=64, rounds=100, w=0.9, 
                    max_states=8, all_max=False, start_states=2, last_gen=False, 
                    noise=True):
+    """Runs a single generation.
 
-    #returns a tuple, feeds into run_simulation
+    Args:
+        agents: the list of agents
+        game: the game matrix
+        evol: a list of evolution settings (breed, survive, newcomers)
+        count: the number of agents
+        rounds: ???
+        w: the probability of the game going on another turn
+        max_states: the maximum number of states
+        all_max: whether or not the agents will all have the maximum number of 
+            states
+        start_states: ???
+        last_gen: whether or not this is the final generation
+        noise: whether or not to use Joss-Ann noise
+
+    Returns
+        gen_info: a tuple containing ??? 
+    """
+
     scores = [0] * len(agents)
     #for agent in agents:
     #    print agent
