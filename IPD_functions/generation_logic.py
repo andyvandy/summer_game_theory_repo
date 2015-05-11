@@ -3,7 +3,36 @@ from IPD_utilities import *
 from generate_agents import *
 from game_logic import *
 
+import time
 
+
+def timing_round(f):
+    def wrap(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
+        time1 = time.time()
+        ret = f(agents, game, w=w, max_states=max_states, all_max=all_max, noise=noise)
+        time2 = time.time()
+        print '%s function took %0.3f ms' % (f.func_name, (time2-time1)*1000.0)
+        return ret
+    return wrap    
+
+def timing_generation(f):
+    def wrap(agents, game, evol, count=64, rounds=100, w=0.9, 
+                   max_states=8, all_max=False, start_states=2, last_gen=False, 
+                   noise=True):
+        time1 = time.time()
+        ret = f(agents, game, evol, count = count, 
+                rounds = rounds, w = w, 
+                start_states = start_states,
+                max_states = max_states, 
+                all_max = all_max, 
+                noise = noise,
+                last_gen = last_gen)
+        time2 = time.time()
+        print '%s function took %0.3f ms' % (f.func_name, (time2-time1)*1000.0)
+        return ret
+    return wrap      
+
+#@timing_round
 def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
     """Pairs agents off to go play a game so that each agent plays one game per
     round. All games are of the same length in a given round, the strategies
@@ -33,14 +62,14 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
     order_assignment = zip(agents, shuffled_numbers)
     # print order_assignment
     scores = [0] * len(agents)
-
+    
     stats=[0, #cooperations
            0, #defections
            0 #turns
            ]
            
     #calculates how many turns for the round using an exponential distribution
-    turns = int(round(r.expovariate(1 - w))) + 1 
+    turns = min(int(round(r.expovariate(1 - w)))+ 1, int(float(1/(1-w)))) #to save on time since some games were taking forever and slowing stuff down This makes it run 30% faster
     
     # I have a feeling that this is the slow bit -Stu
     for i in [2 * j for j in range(len(agents) / 2)]:
@@ -54,7 +83,7 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
     stats[2]= turns + 1 
     return (scores, stats ) # since the first turn in games isn't counted
 
-    
+#@timing_generation    
 def run_generation(agents, game, evol, count=64, rounds=100, w=0.9, 
                    max_states=8, all_max=False, start_states=2, last_gen=False, 
                    noise=True):
@@ -214,7 +243,21 @@ def test_generation_logic():
     #TODO: write tests for these functions
     r.seed(13)
     assert len(generate_agents(count = 12, max_states = 4, all_max = True)[5]) == 4 * 3 + 2
+    agents=generate_agents(count =64, max_states = 4, all_max = True)
+    game = [[3, 3], [0, 5], [5, 0], [1, 1]] 
+    w=0.98
+    play_round(agents, game, w=w, max_states=6, all_max=False, noise=False)
+    run_generation(agents, game, 
+                     count = 64, 
+                     rounds = 150, w = w,
+                     evol =  (24, 23, 1), 
+                     start_states = 4,
+                     max_states = 6, 
+                     all_max = False, 
+                     noise = True,
+                     last_gen = False) # takes about 480ms
     return 'test passes'
 
 #print test_generation_logic()
-    
+
+

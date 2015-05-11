@@ -1,6 +1,8 @@
 import sys 
 import random as r
 
+
+
 def tally_score(moves, game):
     # returns the agents' respective scores
     R1, S1, T1, P1 = game[0][0], game[1][0], game[2][0], game[3][0]
@@ -49,7 +51,7 @@ def tally_score(moves, game):
     
     return(tally_score(moves, game)) 
     
-    
+
 def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
     
     # takes as input two agent strategies as strings returns their respective scores
@@ -64,10 +66,12 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
         joss_ann1, joss_ann2 = (0,0),(0,0) 
     moves = []
     
-    for i in range(turns): # the first turn occurs right before this loop
+    for i in range(turns-1): # the first turn occurs right before this loop
         # the states are updated based off of the other agent's last move
-        p1rand = r.random()
-        p2rand = r.random()
+        if noise: 
+            p1rand,p2rand = r.random(),r.random()
+        else:
+            p1rand,p2rand = (1,1)
         move=[0,0]
         if joss_ann1[0] < p1rand <= joss_ann1[1] : move[0]=1
         elif joss_ann1[1] < p1rand: move[0]=player1[player1[0] * 3 - 1]
@@ -128,18 +132,21 @@ def test_game_logic():
     assert tally_score(moves3, game) == (14, 9)
     
     #TODO need to rewrite these test cases using r.seed() for new agent format
-    agent1 = [1, 0, 1, 1, 1]
-    agent2 = [1, 0, 1, 1, 1]
-    agent3 = [1, 0, 0, 1, 1]
-    agent4 = [1, 0, 0, 1, 2, 1, 1, 2]
-    agent5 = [1, 0, 0, 2, 2, 1, 1, 1]
-    agent6 = [1, 0, 0, 2, 2, 1, 3, 3, 1, 1, 1, 1, 1, 3]
-    assert isinstance((play_game(agent1, agent2, game, turns = 30)), tuple)
-    assert play_game(agent1, agent2, game, turns = 25) == (25, 25)
-    assert play_game(agent1, agent3, game, turns = 40) == (200,0)
-    assert play_game(agent4, agent5, game, turns = 12) == (28, 33)
-    assert play_game(agent4, agent6, game, turns = 12) == (22,27)
+    agent1 = [1,[0.34,0.27], 1, 1, 1]
+    agent2 = [1,[0.34,0.27], 1, 1, 1]
+    agent3 = [1,[0.34,0.27], 0, 1, 1]
+    agent4 = [1,[0.34,0.27], 0, 1, 2, 1, 1, 2]
+    agent5 = [1,[0.34,0.27], 0, 2, 2, 1, 1, 1]
+    agent6 = [1,[0.34,0.27], 0, 2, 2, 1, 3, 3, 1, 1, 1, 1, 1, 3]
+    assert isinstance((play_game(agent1, agent2, game, turns = 30,noise=False)[0]), tuple)
+    print play_game(agent1, agent2, game, turns =100,noise=False)[0]
+    assert play_game(agent1, agent2, game, turns = 25,noise=False)[0] == (25, 25)
+    assert play_game(agent1, agent3, game, turns = 40,noise=False)[0]  == (200,0)
+    assert play_game(agent4, agent5, game, turns = 12,noise=False)[0]  == (28, 33)
+    assert play_game(agent4, agent6, game, turns = 12,noise=False)[0]  == (22,27)
     return 'test passes'
+
+
 
 #print test_game_logic()    
 

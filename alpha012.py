@@ -66,9 +66,7 @@ DEBUG = False
 def main():
     """Main loop.
     1. Initializes variables.
-    2. Generates agents.
-    3. Runs simulation.
-    4. Creates webpage.
+    2. Runs simulation.
     """
 
     # TODO: load all of these parameters from a file
@@ -77,17 +75,17 @@ def main():
     game_matrix = [[3, 3], [1, 5], [5, 1], [0, 0]]
         #prisoner's dilema:[[3, 3], [0, 5], [5, 0], [1, 1]] 
         #snowdrift/chicken game: [[3, 3], [1, 5], [5, 1], [0, 0]] 
-    number_of_agents = 36
+    number_of_agents = 64
     max_states = 1
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
     rounds = 150
     generations = 250
-    simulations=200
+    simulations=100
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
-    evolution_settings = (12, 11, 1) # (breed, survive, newcommers)
+    evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
     
     
     run_all_simulations( game = game_matrix,
@@ -146,7 +144,7 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
                              start_states = start_states, 
                              max_states = max_states, all_max = all_max, 
                              noise = noise)
-        if (i+1)%10 ==0: print "simulation ", i+1
+        if (i+1)%5 ==0: print "simulation ", i+1
         stats[0].append(simulation_stats[0]) #avg turn score
         stats[1].append(simulation_stats[5]) #avg_pop_coop
         stats[2].append(simulation_stats[6]) #avg_pop_defect
@@ -190,8 +188,8 @@ def write_overall_data(stats):
     
 def run_simulation( game, evol, count=64, rounds=100, w=0.9, 
                    generations=100, start_states=2, max_states=8, all_max=False,
-
                    noise=True, verbose=False):
+                   
     """
     Runs the simulation.
 
@@ -215,7 +213,6 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
     """
 
     simulation_stats = [[], [0], [], [], []] # what is this?
-                   noise=True, verbose=False):
     
     # returns a tuple,feeds into main
     
