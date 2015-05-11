@@ -33,18 +33,26 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
     order_assignment = zip(agents, shuffled_numbers)
     # print order_assignment
     scores = [0] * len(agents)
-    # calculates how many turns for the round using an exponential distribution
+
+    stats=[0, #cooperations
+           0, #defections
+           0 #turns
+           ]
+           
+    #calculates how many turns for the round using an exponential distribution
     turns = int(round(r.expovariate(1 - w))) + 1 
     
     # I have a feeling that this is the slow bit -Stu
     for i in [2 * j for j in range(len(agents) / 2)]:
         index1, index2 = [y[1] for y in order_assignment].index(i), [y[1] for y in order_assignment].index(i + 1)
         (player1, player2) = order_assignment[index1][0], order_assignment[index2][0]
-        (scores[index1], scores[index2]) = play_game(player1, player2, game, 
+        (scores[index1], scores[index2]),gamestats = play_game(player1, player2, game, 
                                                      turns = turns, 
                                                      noise = noise)
-        
-    return (scores, turns + 1) # since the first turn in games isn't counted
+        stats[0]+=gamestats[0]
+        stats[1]+=gamestats[1]
+    stats[2]= turns + 1 
+    return (scores, stats ) # since the first turn in games isn't counted
 
     
 def run_generation(agents, game, evol, count=64, rounds=100, w=0.9, 
@@ -74,14 +82,18 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     #for agent in agents:
     #    print agent
     
+    cooperations=0
+    defections=0
     turn_count = 0
     for i in range(rounds):
-        round_scores, number_turns = play_round(agents, game, w = w, 
+        round_scores, round_stats = play_round(agents, game, w = w, 
                                                 all_max = all_max, 
                                                 max_states = max_states, 
                                                 noise = noise)
         scores = [x + y for x, y in zip(scores, round_scores)]
-        turn_count += number_turns
+        cooperations+= round_stats[0]
+        defections+= round_stats[1]
+        turn_count += round_stats[2]
         
 
     results = zip(agents, scores) 
@@ -111,14 +123,20 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     avg_hard_coop= float(coop_prob_total) / count
     avg_hard_defect= float(defect_prob_total) / count
     avg_score = float(sum(scores)) / (count * turn_count)
+    avg_pop_coop= float(cooperations) / (count * turn_count)
+    avg_pop_defect= float(defections) / (count * turn_count)
     # print avg_score
     # should return all stats in one tuple, preferably a labelled one
     batting_avg = [float(x) / turn_count for x in top_scores]
+    stats=(avg_score, batting_avg, 
+            avg_sentience,
+            avg_hard_coop,
+            avg_hard_defect,
+            avg_pop_coop,
+            avg_pop_defect)
     #data tracking------^
    
-    if last_gen: return (next_gen, top_scores, (avg_score, batting_avg, 
-                                                avg_sentience, avg_hard_coop,
-                                                avg_hard_defect))
+    if last_gen: return (next_gen, top_scores, stats)
 
     for i in range(evol[0]):
         winner = results[i][0]
@@ -138,8 +156,7 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     #print len(next_gen)
     #print next_gen
     #raw_input('Press <ENTER> to continue')
-    return (next_gen, top_scores, (avg_score, batting_avg, avg_sentience, 
-                                   avg_hard_coop, avg_hard_defect))    
+    return (next_gen, top_scores, stats)    
 
 
 def reproduce(agent, all_max=False, max_states=8):

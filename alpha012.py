@@ -22,6 +22,10 @@ Some notes from Andrew:
     -1 is defect, 0 is cooperate throughout the code
     
     If something doesn't make sense please tell me!
+    
+    maxstates =1 and noise= False with the snowdrift game produces a mixed population
+    of hawks and doves that oscillates around an equilibrium ratio as seen
+    in the literature
 
 Note from Stuart:
     If for some reason the web page doesn't launch automatically for you when
@@ -70,41 +74,124 @@ def main():
     # TODO: load all of these parameters from a file
 
     # represents the value of choices
-    game_matrix = [[3, 3], [0, 5], [5, 0], [1, 1]] 
-    number_of_agents = 64
-    max_states = 6
-    start_states = 1
+    game_matrix = [[3, 3], [1, 5], [5, 1], [0, 0]]
+        #prisoner's dilema:[[3, 3], [0, 5], [5, 0], [1, 1]] 
+        #snowdrift/chicken game: [[3, 3], [1, 5], [5, 1], [0, 0]] 
+    number_of_agents = 36
+    max_states = 1
+    start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
-    rounds = 20
-    generations = 1000
+    rounds = 150
+    generations = 250
+    simulations=200
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
-    evolution_settings = (25, 13, 1) # (breed, survive, newcommers)
+    evolution_settings = (12, 11, 1) # (breed, survive, newcommers)
     
-    agents = generate_agents(count = number_of_agents, 
-                             max_states = start_states, all_max = True,
-                             noise = False)
-
-    (result, ranks, stats) = run_simulation(agents, game = game_matrix,
+    
+    run_all_simulations( game = game_matrix,
+                             evol = evolution_settings,
+                             number_of_simulations=simulations,
                              count = number_of_agents, 
-                             evol = evolution_settings, rounds = rounds, w = w,
+                             rounds = rounds, w = w,
                              generations = generations, 
                              start_states = start_states, 
                              max_states = max_states, all_max = all_max, 
                              noise = noise)
-
-    simulation_results = zip(result, ranks, stats[1])
-    pretty_print(simulation_results, entries_per_line = 1)
-
-    topAgent = result[0]
-    print topAgent, ranks[0]
-    draw_to_browser(result,stats)
+    return "complete"
+    
     
 
-def run_simulation(agents, game, evol, count=64, rounds=100, w=0.9, 
+def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, w=0.9, 
                    generations=100, start_states=2, max_states=8, all_max=False,
-                   noise=True):
+                   noise=True):  
+    if number_of_simulations==1:
+        (result, ranks, stats) = run_simulation( game = game,
+                             evol = evol,
+                             number_of_simulations=number_of_simulations,
+                             count = count, 
+                             rounds = rounds, w = w,
+                             generations = generations, 
+                             start_states = start_states, 
+                             max_states = max_states, all_max = all_max, 
+                             noise = noise,
+                             verbose=True)
+        simulation_results = zip(result, ranks, stats[1])
+        pretty_print(simulation_results, entries_per_line = 1)
+
+        topAgent = result[0]
+        print topAgent, ranks[0]
+        draw_to_browser(result,stats)
+        return "complete"
+    
+    
+    avg_score_logs=[],
+    avg_coop_logs=[],
+    avg_defect_logs=[]
+    stats=[[],
+            [],
+            [],
+            
+            
+            
+        ]
+    
+    for i in range(number_of_simulations):
+        (result, ranks, simulation_stats) = run_simulation( game = game,
+                             evol = evol,
+                             count = count, 
+                             rounds = rounds, w = w,
+                             generations = generations, 
+                             start_states = start_states, 
+                             max_states = max_states, all_max = all_max, 
+                             noise = noise)
+        if (i+1)%10 ==0: print "simulation ", i+1
+        stats[0].append(simulation_stats[0]) #avg turn score
+        stats[1].append(simulation_stats[5]) #avg_pop_coop
+        stats[2].append(simulation_stats[6]) #avg_pop_defect
+    
+    draw_overall_charts(stats)
+    write_overall_data(stats)
+    
+def draw_overall_charts(stats):
+    #draws charts for data from multiple simulations
+    
+    #chart 1 : average score per turn
+    sns.set(style = "darkgrid", palette = "muted")
+    fig = plt.subplots(1, 1, figsize = (4, 2.5))
+    b, g, r, p = sns.color_palette("muted", 4)
+    ax = sns.tsplot(stats[0], color=g)
+    ax.set(ylabel = "Average score per turn")
+    ax.set_xlabel("Generation")
+    plt.gcf().subplots_adjust(bottom = 0.22)
+    plt.savefig("images/historical_overall.png") 
+    
+    
+    plt.clf()
+    plt.cla()
+    
+    #chart 3: cooperation and defection
+    sns.set(style="darkgrid", palette="muted")
+    fig = plt.subplots(1, 1, figsize=(4, 3))
+    b, g, r, p = sns.color_palette("muted", 4)
+    data = np.dstack([[j for j in stats[i]] for i in [1,2]]) 
+    ax = sns.tsplot(data, color = [ b, r])
+    ax.set(ylabel = "percent coop/defect")
+    ax.set_xlabel("Generation")
+    plt.gcf().subplots_adjust(bottom = 0.22)
+    plt.savefig("images/cooppct_overall.png") 
+    
+    return
+
+def write_overall_data(stats):
+    #TODO
+    pass
+    
+def run_simulation( game, evol, count=64, rounds=100, w=0.9, 
+                   generations=100, start_states=2, max_states=8, all_max=False,
+
+                   noise=True, verbose=False):
     """
     Runs the simulation.
 
@@ -128,12 +215,22 @@ def run_simulation(agents, game, evol, count=64, rounds=100, w=0.9,
     """
 
     simulation_stats = [[], [0], [], [], []] # what is this?
+                   noise=True, verbose=False):
+    
+    # returns a tuple,feeds into main
+    
+    #initialize agents
+    agents = generate_agents(count = count, 
+                             max_states = start_states, all_max = True,
+                             noise = True)
+    
+    simulation_stats = [[], [0], [], [], [],[],[]]
     last_gen = False
     for i in range(generations):
-        if i % 25 == 24: print "Generation " + str(i + 1)
+        if i % 25 == 24 and verbose: print "Generation " + str(i + 1)
         if i == generations - 1: last_gen=True
         
-        (agents, top_scores, stats) = run_generation(agents, game, 
+        (agents, top_scores, generation_stats) = run_generation(agents, game, 
                                                      count = count, 
                                                      rounds = rounds, w = w,
                                                      evol = evol, 
@@ -143,12 +240,14 @@ def run_simulation(agents, game, evol, count=64, rounds=100, w=0.9,
                                                      noise = noise,
                                                      last_gen = last_gen)
 
-        simulation_stats[0].append(stats[0])
-        simulation_stats[2].append(stats[2])
-        simulation_stats[3].append(stats[3])
-        simulation_stats[4].append(stats[4])
+        simulation_stats[0].append(generation_stats[0]) #avgscore
+        simulation_stats[2].append(generation_stats[2]) #avg_sentience
+        simulation_stats[3].append(generation_stats[3]) #avg_hard_coop , from joss ann noise
+        simulation_stats[4].append(generation_stats[4]) #avg_hard_defect , from joss ann noise
+        simulation_stats[5].append(generation_stats[5]) #avg_pop_coop
+        simulation_stats[6].append(generation_stats[6]) #avg_pop_defect
 
-    simulation_stats[1] = stats[1]
+    simulation_stats[1] = generation_stats[1] #final gen individual batting avgs for final output
     return (agents, top_scores, simulation_stats)
 
 
@@ -178,7 +277,7 @@ def write_html(json_list):
 def draw_to_browser(graph_list, stats):
     # print "# of strings"
     # print len(graphStrings)
-    draw_charts(stats)
+    draw_sim_charts(stats)
     data1 = {}
     data2= []
     for i in range(len(graph_list)):
@@ -212,7 +311,10 @@ def draw_to_browser(graph_list, stats):
     http_server.load_url('graph009.html')
     print('Or copy all files to webserver and load graph.html')
 
-def draw_charts(stats):
+def draw_sim_charts(stats):
+    #draws charts from a single simulation and saves files to be shown in html output_file
+    
+    #chart 1 : average score per turn
     sns.set(style = "darkgrid", palette = "muted")
     fig = plt.subplots(1, 1, figsize = (4, 2.5))
     b, g, r, p = sns.color_palette("muted", 4)
@@ -220,12 +322,13 @@ def draw_charts(stats):
     ax.set(ylabel = "Average score per turn")
     ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom = 0.22)
+    plt.savefig("images/historical.png") 
     
-    #pylab.figure(figsize=(4,3), dpi=80)
-    #pylab.plot(range(generations),stats[0])
-    plt.savefig("historical.png") 
     plt.clf()
     plt.cla()
+    
+    #chart 2 : joss-Ann "sentience" where sentience is defined as how little
+    # noise the strategy has. A more "sentient" strategy follows it's states more closely
     sns.set(style="darkgrid", palette="muted")
     fig = plt.subplots(1, 1, figsize=(4, 3))
     b, g, r, p = sns.color_palette("muted", 4)
@@ -235,7 +338,22 @@ def draw_charts(stats):
     ax.set(ylabel = "Average sentience")
     ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom = 0.22)
-    plt.savefig("sentience.png") 
+    plt.savefig("images/sentience.png") 
+    
+    plt.clf()
+    plt.cla()
+    
+    #chart 3: cooperation and defection
+    sns.set(style="darkgrid", palette="muted")
+    fig = plt.subplots(1, 1, figsize=(4, 3))
+    b, g, r, p = sns.color_palette("muted", 4)
+    data = np.dstack([[j for j in stats[i]] for i in [5,6]]) 
+    ax = sns.tsplot(data, color = [ b, r])
+    ax.set(ylabel = "percent coop/defect")
+    ax.set_xlabel("Generation")
+    plt.gcf().subplots_adjust(bottom = 0.22)
+    plt.savefig("images/cooppct.png") 
+    
     return 
     
     

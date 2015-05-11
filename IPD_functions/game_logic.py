@@ -68,18 +68,12 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
         # the states are updated based off of the other agent's last move
         p1rand = r.random()
         p2rand = r.random()
-        if p1rand <= joss_ann1[0] and p2rand <= joss_ann2[0]: moves.append((0, 0))
-        elif p1rand <= joss_ann1[1] and p2rand <= joss_ann2[0]: moves.append((1, 0))
-        elif p2rand <= joss_ann2[0]: moves.append((player1[player1[0] * 3 - 1], 0))
-        elif p1rand <= joss_ann1[0] and p2rand <= joss_ann2[1]: moves.append((0, 1))
-        elif p1rand <= joss_ann1[1] and p2rand <= joss_ann2[1]: moves.append((1, 1))
-        elif p2rand <= joss_ann2[1]: moves.append((player1[player1[0] * 3 - 1], 1))
-        elif p1rand <= joss_ann1[0]: moves.append((0, player2[player2[0] * 3 - 1]))
-        elif p1rand <= joss_ann1[1]: moves.append((1, player2[player2[0] * 3 - 1]))
-        else: moves.append((player1[player1[0] * 3 - 1], player2[player2[0] * 3 - 1]))
-
-        #TODO: lol this definitely needs someone else's double checking
-        
+        move=[0,0]
+        if joss_ann1[0] < p1rand <= joss_ann1[1] : move[0]=1
+        elif joss_ann1[1] < p1rand: move[0]=player1[player1[0] * 3 - 1]
+        if joss_ann2[0] < p2rand <= joss_ann2[1] : move[1]=1
+        elif joss_ann2[1] < p2rand: move[1]=player2[player2[0] * 3 - 1]
+        moves.append(tuple(move))
         try: player1[0] = player1[player1[0] * 3 + moves[i][1]]
         except: 
             # used for debugging faulty mutation mechanism
@@ -107,16 +101,20 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
         
     p1rand = r.random()
     p2rand = r.random()
-    if p1rand <= joss_ann1[0] and p2rand <= joss_ann2[0]: moves.append((0, 0))
-    elif p1rand <= joss_ann1[1] and p2rand <= joss_ann2[0]: moves.append((1, 0))
-    elif p2rand <= joss_ann2[0]: moves.append((player1[player1[0] * 3 - 1], 0))
-    elif p1rand <= joss_ann1[0] and p2rand <= joss_ann2[1]: moves.append((0, 1))
-    elif p1rand <= joss_ann1[1] and p2rand <= joss_ann2[1]: moves.append((1, 1))
-    elif p2rand <= joss_ann2[1]: moves.append((player1[player1[0] * 3 - 1], 1))
-    elif p1rand <= joss_ann1[0]: moves.append((0, player2[player2[0] * 3 - 1]))
-    elif p1rand <= joss_ann1[1]: moves.append((1, player2[player2[0] * 3 - 1]))
-    else: moves.append((player1[player1[0] * 3 - 1], player2[player2[0] * 3 - 1]))
-    return(tally_score(moves, game))
+    move=[0,0]
+    if joss_ann1[0] < p1rand <= joss_ann1[1] : move[0]=1
+    elif joss_ann1[1] < p1rand: move[0]=player1[player1[0] * 3 - 1]
+    if joss_ann2[0] < p2rand <= joss_ann2[1] : move[1]=1
+    elif joss_ann2[1] < p2rand: move[1]=player2[player2[0] * 3 - 1]
+    moves.append(tuple(move))
+    
+    #stat tracking V
+    cooperations= moves.count((0, 0)) * 2 + moves.count((0, 1))  + moves.count((1, 0)) 
+    defections= moves.count((0, 1)) + moves.count((1, 0)) + moves.count((1, 1)) * 2
+    stats=(cooperations,
+            defections)
+    #stat tracking ^
+    return(tally_score(moves, game),stats)
     
     
 def test_game_logic():
