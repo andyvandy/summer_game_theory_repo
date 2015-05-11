@@ -72,11 +72,11 @@ def main():
     # TODO: load all of these parameters from a file
 
     # represents the value of choices
-    game_matrix = [[3, 3], [1, 5], [5, 1], [0, 0]]
+    game_matrix = [[3, 3], [0, 5], [5, 0], [1, 1]]
         #prisoner's dilema:[[3, 3], [0, 5], [5, 0], [1, 1]] 
         #snowdrift/chicken game: [[3, 3], [1, 5], [5, 1], [0, 0]] 
     number_of_agents = 64
-    max_states = 1
+    max_states = 6
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
@@ -107,7 +107,7 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
     if number_of_simulations==1:
         (result, ranks, stats) = run_simulation( game = game,
                              evol = evol,
-                             number_of_simulations=number_of_simulations,
+                             
                              count = count, 
                              rounds = rounds, w = w,
                              generations = generations, 
