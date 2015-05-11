@@ -50,6 +50,7 @@ from game_logic import play_game,tally_score
 from generation_logic import play_round,run_generation
 from generate_agents import generate_agents
 from IPD_utilities import pretty_print
+from class_definitions import Agent
 
 import random as r
 import json                     # for d3 drawing
@@ -88,33 +89,32 @@ def main():
     evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
     
     
-    run_all_simulations( game = game_matrix,
-                             evol = evolution_settings,
-                             number_of_simulations=simulations,
-                             count = number_of_agents, 
-                             rounds = rounds, w = w,
-                             generations = generations, 
-                             start_states = start_states, 
-                             max_states = max_states, all_max = all_max, 
-                             noise = noise)
+    run_all_simulations(game = game_matrix,
+                        evol = evolution_settings,
+                        number_of_simulations = simulations,
+                        count = number_of_agents, 
+                        rounds = rounds, w = w,
+                        generations = generations, 
+                        start_states = start_states, 
+                        max_states = max_states, all_max = all_max, 
+                        noise = noise)
+
     return "complete"
     
-    
 
-def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, w=0.9, 
-                   generations=100, start_states=2, max_states=8, all_max=False,
-                   noise=True):  
+def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, 
+                        w=0.9, generations=100, start_states=2, max_states=8, 
+                        all_max=False, noise=True):  
     if number_of_simulations==1:
-        (result, ranks, stats) = run_simulation( game = game,
-                             evol = evol,
-                             
-                             count = count, 
-                             rounds = rounds, w = w,
-                             generations = generations, 
-                             start_states = start_states, 
-                             max_states = max_states, all_max = all_max, 
-                             noise = noise,
-                             verbose=True)
+        (result, ranks, stats) = run_simulation(game = game, evol = evol, 
+                                                count = count, rounds = rounds, 
+                                                w = w, 
+                                                generations = generations, 
+                                                start_states = start_states, 
+                                                max_states = max_states, 
+                                                all_max = all_max, 
+                                                noise = noise, verbose = True)
+
         simulation_results = zip(result, ranks, stats[1])
         pretty_print(simulation_results, entries_per_line = 1)
 

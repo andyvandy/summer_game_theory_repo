@@ -1,8 +1,6 @@
 import sys 
 import random as r
 
-
-
 def tally_score(moves, game):
     # returns the agents' respective scores
     R1, S1, T1, P1 = game[0][0], game[1][0], game[2][0], game[3][0]
