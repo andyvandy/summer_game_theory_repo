@@ -56,11 +56,10 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
           alright.
         - Could likely be sped up
     """
-
-    shuffled_numbers = range(len(agents))
-    r.shuffle(shuffled_numbers)
-    order_assignment = zip(agents, shuffled_numbers)
-    # print order_assignment
+    
+    # Shuffle agents
+    agents = r.shuffle(agents)
+    
     scores = [0] * len(agents)
     
     stats=[0, #cooperations
@@ -68,18 +67,20 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
            0 #turns
            ]
            
-    #calculates how many turns for the round using an exponential distribution
-    turns = min(int(round(r.expovariate(1 - w)))+ 1, int(float(1/(1-w)))) #to save on time since some games were taking forever and slowing stuff down This makes it run 30% faster
+    # calculates how many turns for the round using an exponential distribution
+    # to save on time since some games were taking forever and slowing stuff 
+    # down This makes it run 30% faster
+    turns = min(int(round(r.expovariate(1 - w)))+ 1, int(float(1/(1-w)))) 
     
     # I have a feeling that this is the slow bit -Stu
-    for i in [2 * j for j in range(len(agents) / 2)]:
-        index1, index2 = [y[1] for y in order_assignment].index(i), [y[1] for y in order_assignment].index(i + 1)
-        (player1, player2) = order_assignment[index1][0], order_assignment[index2][0]
-        (scores[index1], scores[index2]),gamestats = play_game(player1, player2, game, 
-                                                     turns = turns, 
-                                                     noise = noise)
+    for i in range(0, len(agents), 2):
+        (player1, player2) = (agents[i], agents[i + 1])
+        (scores[i], scores[i + 1]),gamestats = play_game(player1, player2, game, 
+                                                         turns = turns, 
+                                                         noise = noise)
         stats[0]+=gamestats[0]
         stats[1]+=gamestats[1]
+
     stats[2]= turns + 1 
     return (scores, stats ) # since the first turn in games isn't counted
 
@@ -124,8 +125,7 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
         defections+= round_stats[1]
         turn_count += round_stats[2]
         
-
-    results = zip(agents, scores) 
+    results = zip(agents, scores)
     results.sort(key = get_key, reverse = True) #highest scores first
 
     top_scores=[]

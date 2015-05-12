@@ -67,4 +67,4 @@ def test_generate_agents():
     assert len(test_agent.behaviour) == 4
     return 'test passes'
 
-#print test_generate_agents()
+print test_generate_agents()
