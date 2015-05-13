@@ -80,8 +80,8 @@ def main():
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
-    rounds = 20
-    generations = 250
+    rounds = 25
+    generations = 400
     simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
@@ -252,15 +252,16 @@ def write_html(json_list):
     html_template.close()
     custom = 'var allData='+''+" {'0': {"+'\n'
     
-    for (index, (key, value)) in enumerate(json_list['0'].items()):
+    '''for (index, (key, value)) in enumerate(json_list['0'].items()):
         custom += "'" + str(key) + "'" + " : "  + str(value) + ',\n'
     custom += "}," + '\n' + "'codes':[ " + '\n'
     for i in range(len(json_list["codes"])):
         custom += str(json_list["codes"][i]) + ',\n'
     custom += " ]}" + ';' + '\n'
     custom += 'console.log(typeof allData);'
-    total = html_template_string % {"jsonData": custom}
+    total = html_template_string % {"jsonData": custom}'''
     
+    total=html_template_string
     output_file = open("graph009.html", "w")
     output_file.seek(0)
     output_file.truncate() # empties file
@@ -299,7 +300,7 @@ def draw_to_browser(graph_list, stats):
     # print d 
     # write json
     write_html(data)
-    # json.dump(d, open('temp.json', 'w'))
+    json.dump(data, open('data.json', 'w'))
     print('Wrote node-link JSON data to temp.json')
     # open URL in running web browser
     http_server.load_url('graph009.html')

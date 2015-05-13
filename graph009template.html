@@ -74,7 +74,8 @@
         
         // http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
         // Compute the distinct nodes from the links.
-        %(jsonData)s
+        $.getJSON('data.json', function(data) {
+        var allData=data
         //var cloneData = clone(allData);
         var width = 600,
             height = 500;
@@ -222,6 +223,7 @@
             clearNodes();
             updateNodes();
         }
+        });
         </script>
         <img src="images/historical.png" float="right">
         <img src="images/cooppct.png" float="right">
