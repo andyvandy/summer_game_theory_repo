@@ -80,9 +80,9 @@ def main():
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
-    rounds = 150
+    rounds = 20
     generations = 250
-    simulations=100
+    simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
     evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
@@ -129,10 +129,7 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
     avg_defect_logs=[]
     stats=[[],
             [],
-            [],
-            
-            
-            
+            [],      
         ]
     
     for i in range(number_of_simulations):
