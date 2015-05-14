@@ -69,8 +69,8 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
             move[1] = agent2.move()
 
         moves.append(tuple(move))
-
-        try: agent1.change_state(move[1])
+        
+        try: agent1.current_state = agent1.behaviour[agent1.current_state - 1][1 + move[1]]
         except: 
             # used for debugging faulty mutation mechanism
             # the first number can vary here as it is used to track the player's
@@ -82,11 +82,12 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
             print moves
             sys.exit("error occurred in play_game 1")
         
-        try: agent2.change_state(move[0])
+        try: agent2.current_state = agent2.behaviour[agent2.current_state - 1][1 + move[0]]
         except: 
             print "check your mutation logic"
             print "p1", agent1.behaviour
             print "p2", agent2.behaviour
+            print "p2 state", agent2.current_state
             print moves[-1][0]
             print moves
             sys.exit("error occurred in play_game 2 ")
@@ -102,7 +103,12 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
     stats=(cooperations,
             defections)
     #stat tracking ^
-    return(tally_score(moves, game),stats)
+
+    result = tally_score(moves, game)
+    agent1.score += result[0]
+    agent2.score += result[1]
+
+    return stats
     
     
 def test_game_logic():

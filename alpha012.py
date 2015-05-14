@@ -119,7 +119,7 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
         pretty_print(simulation_results, entries_per_line = 1)
 
         topAgent = result[0]
-        print topAgent, ranks[0]
+        print topAgent.behaviour, ranks[0]
         draw_to_browser(result,stats)
         return "complete"
     
@@ -221,6 +221,7 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
                              max_states = start_states, all_max = True,
                              noise = True)
     
+    
     simulation_stats = [[], [0], [], [], [],[],[]]
     last_gen = False
     for i in range(generations):
@@ -271,21 +272,21 @@ def write_html(json_list):
     output_file.close()
 
 
-def draw_to_browser(graph_list, stats):
+def draw_to_browser(agents, stats):
     # print "# of strings"
     # print len(graphStrings)
     draw_sim_charts(stats)
     data1 = {}
     data2= []
-    for i in range(len(graph_list)):
+    for i in range(len(agents)):
         #print graphStrings[i]
         
-        G = create_graph_from_list(graph_list[i])
+        G = create_graph_of_agent(agents[i])
         d = json_graph.node_link_data(G)
         d["directed"] = 1
         d["multigraph"] = 1
         data1[str(i + 1)] = d
-        j1, j2 = round(graph_list[i][1][0], 4), round(graph_list[i][1][1], 4)
+        j1, j2 = round(agents[i].joss_ann[0], 4), round(agents[i].joss_ann[1], 4)
         jay1, jay2 = j1, j2
         if j1 + j2 > 1: jay1, jay2 = (1 - j2, 1 - j1)
         text = str(i + 1) + " - (" + str(jay1) + "," + str(jay2) + ")"
@@ -354,9 +355,9 @@ def draw_sim_charts(stats):
     return 
     
     
-def create_graph_from_list(graph):
+def create_graph_of_agent(agent):
     # takes a string as input and outputs a Networkx graph object
-    (nodes, edges) = parse(graph)
+    (nodes, edges) = parse(agent)
     G = nx.MultiDiGraph()
     G.add_nodes_from(nodes)
     G.add_edges_from(edges)
@@ -386,18 +387,18 @@ def create_graph_from_list(graph):
     return G
     
 
-def parse(graph_list):
+def parse(agent):
     #returns two lists of edges and a list of nodes
     #print graph_list
-    number_nodes = (len(graph_list) - 2) / 3
+    number_nodes = len(agent.behaviour)
     edge_list = []
     node_list = []
     for i in range(number_nodes):
         # (start, end, {'attribute': 'value'})
-        edge_list.append((i + 1, graph_list[3 * i + 3], {'type': 'C'})) 
-        edge_list.append((i + 1, graph_list[3 * i + 4], {'type': 'D'}))
+        edge_list.append((i + 1, agent.behaviour[i][1], {'type': 'C'})) 
+        edge_list.append((i + 1, agent.behaviour[i][2], {'type': 'D'}))
 
-        if graph_list[3 * i + 2]: node_list.append((i + 1, {'type': 'D'}))
+        if agent.behaviour[i][0]: node_list.append((i + 1, {'type': 'D'}))
         else: node_list.append((i + 1, {'type': 'C'}))
     
     return (node_list, edge_list)

@@ -38,9 +38,9 @@ def generate_agents(count=64, max_states=8, all_max=False, noise=True):
         
         behaviour = []
         for j in range(states):
-            behaviour.append((r.randint(0, 1), 
+            behaviour.append([r.randint(0, 1), 
                               r.randint(1, states), 
-                              r.randint(1, states)))
+                              r.randint(1, states)])
         
         agent = Agent((1, i), behaviour, joss_ann_parameters)
 
@@ -67,4 +67,4 @@ def test_generate_agents():
     assert len(test_agent.behaviour) == 4
     return 'test passes'
 
-print test_generate_agents()
+#print test_generate_agents()
