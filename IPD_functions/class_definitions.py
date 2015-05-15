@@ -23,9 +23,14 @@ class Agent(object):
         self.current_state = 1
         self.joss_ann = joss_ann
         self.behaviour = behaviour
+        self.score = 0
 
     def move(self):
-        return self.behaviour[self.current_state - 1][0]
+        try: return self.behaviour[self.current_state - 1][0]
+        except:
+            print "Error occurred in Agent.move. agent.current state =",
+            print self.current_state, "agent.behaviour =", self.behaviour
 
     def change_state(self, opponent_move):
         self.current_state = self.behaviour[self.current_state - 1][opponent_move + 1]
+
