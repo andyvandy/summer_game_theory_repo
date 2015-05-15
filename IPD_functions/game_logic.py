@@ -62,11 +62,17 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
             move[0] = 1
         elif joss_ann1[1] < p1rand: 
             move[0] = agent1.move()
+            if move[0] == None:
+                print "P1 empty move, current_state =", agent1.current_state
+                print "behaviour =", agent1.behaviour 
 
         if joss_ann2[0] < p2rand <= joss_ann2[1]: 
             move[1] = 1
         elif joss_ann2[1] < p2rand: 
             move[1] = agent2.move()
+            if move[1] == None:
+                print "P2 empty move, current_state =", agent2.current_state
+                print "behaviour =", agent2.behaviour
 
         moves.append(tuple(move))
         
