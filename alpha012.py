@@ -81,9 +81,9 @@ def main():
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
     all_max = True 
-    rounds = 150
+    rounds = 10
     generations = 250
-    simulations=100
+    simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
     evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
@@ -376,10 +376,13 @@ def create_graph_of_agent(agent):
     #active_nodes=list(set(sorted(active_nodes)))
     
     #print active_nodes
-
-    extra_nodes = list(set(range(1, nx.number_of_nodes(G) + 1)) 
-                       - set(active_nodes))
-
+    #print nodes
+   # print edges
+    
+    
+    extra_nodes = sorted(list(set(range(1, nx.number_of_nodes(G) +1)) 
+                       - set(active_nodes)), reverse=True)
+    #print extra_nodes
     for i in extra_nodes:
         G.remove_node(i)
         #print nx.number_of_nodes(G)
@@ -395,8 +398,8 @@ def parse(agent):
     node_list = []
     for i in range(number_nodes):
         # (start, end, {'attribute': 'value'})
-        edge_list.append((i + 1, agent.behaviour[i][1], {'type': 'C'})) 
-        edge_list.append((i + 1, agent.behaviour[i][2], {'type': 'D'}))
+        edge_list.append((i +1, agent.behaviour[i][1], {'type': 'C'})) 
+        edge_list.append((i +1, agent.behaviour[i][2], {'type': 'D'}))
 
         if agent.behaviour[i][0]: node_list.append((i + 1, {'type': 'D'}))
         else: node_list.append((i + 1, {'type': 'C'}))

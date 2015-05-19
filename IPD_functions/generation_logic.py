@@ -208,13 +208,13 @@ def reproduce(agent, all_max=False, max_states=8):
                 if defect_dest==mutation_state: offspring.behaviour[i][2] =offspring.behaviour[i][2]
                 else: offspring.behaviour[i][2] = defect_dest
 
-        for i in range(mutation_state + 1,  states + 2):
+        for i in range(mutation_state ,  states + 2): # lol be careful with this stuff it's risky business!
             #we don't want to overwrite the starting info so we start at 2
             for state in offspring.behaviour: 
                 if state[1] == i:
-                    state[1]  -= 1
+                    state[1] =i-1
                 if state[2] == i:
-                    state[2]  -= 1
+                    state[2]  = i-1
 
     elif 9 < mutation < 25 and states < max_states:
         # add a state
