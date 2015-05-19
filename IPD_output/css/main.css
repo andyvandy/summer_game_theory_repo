@@ -1,0 +1,61 @@
+
+
+
+
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+/*colour the first node green */
+#node1 {
+    fill:#00FF00 !important;
+}
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#licensing {
+  fill: green;
+}
+
+.node.D {
+  stroke: red;
+}
+
+.node.C {
+  stroke: blue;
+}
+
+.link.D {
+  stroke: red;
+}
+
+.link.C {
+  stroke: blue;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+#code-selection{
+    width:50px;
+    float:left;
+}  
+svg{
+    width: 100%;
+    height: 100%;
+}
+
+  

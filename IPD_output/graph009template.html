@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Iterated Prisoner's Dilemma Output</title>
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div class= "container">
+            <div class="row" >
+                <div class="col-md-1">
+                    <div id="code-selection" >
+                        <select SIZE="12"></select>
+                    </div>
+                </div>
+                <div class="col-md-6" id="viewer">
+                </div>
+                <div class="col-md-5">
+                    <img src="images/historical.png" >
+                    <img src="images/cooppct.png" >
+                </div>
+            </div>
+        </div>
+        <script >
+            var selectedCode = '1',
+                path,
+                circle,
+                force= d3.layout.force(),
+                links,
+                nodes = {};
+            
+            // http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+            // Compute the distinct nodes from the links.
+            $.getJSON('data.json', function(data) {
+            var allData=data
+            //var cloneData = clone(allData);
+            var width = 600,
+                height = 500;
+            var svg = d3.select("#viewer").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            // Per-type markers, as they don't inherit styles.
+            svg.append("defs").selectAll("marker")
+                .data(["C", "D"])
+              .enter().append("marker")
+                .attr("id", function(d) { return d; })
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 15)
+                .attr("refY", -1.5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+              .append("path")
+                .attr("d", "M0,-5L10,0L0,5");
+                
+            d3.select('#code-selection')
+                .select("select")
+                .on("change", codeChange)
+                .selectAll("option")
+                .data(allData["codes"])
+                .enter()
+                .append("option")
+                .attr("value", function (d) {
+                    return d.value;
+                    })
+                .text(function (d) {
+                    return d.text;
+                });
+            $('#code-selection option[value=' + selectedCode + ']').attr("selected", true);
+            updateNodes();
+            function updateNodes() {
+            // Update the links and the nodes any time the data changes
+            svg.selectAll('g').remove();
+
+            links = allData["0"][selectedCode]["links"]
+            nodes = allData["0"][selectedCode]["nodes"]
+            /*links.forEach(function(link) {
+              link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+              link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+            });*/
+
+           
+
+            force 
+                .nodes(nodes)
+                .links(links)
+                .size([width, height])
+                .linkDistance(90) //viz param
+                .charge(-300)
+                .on("tick", tick)
+                .start();
+
+            
+
+            var path = svg.append("g").selectAll("path")
+                .data(force.links())
+              .enter().append("path")
+                .attr("class", function(d) { return "link " + d.type; })
+                .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+
+            var circle = svg.append("g").selectAll("circle")
+                .data(force.nodes()) 
+              .enter().append("circle")
+                .attr("class", function(d) { return "node " + d.type; })
+                .attr("id", function(d) { return "node" +d.id; })
+
+                .attr("r", 6)
+                .call(force.drag);
+
+            var text = svg.append("g").selectAll("text")
+                .data(force.nodes())
+              .enter().append("text")
+                .attr("x", 8)
+                .attr("y", ".31em")
+                .text(function(d) { return d.name; });
+
+            // Use elliptical arc path segments to doubly-encode directionality.
+            function tick() {
+              path.attr("d", linkArc);
+              circle.attr("transform", transform);
+              text.attr("transform", transform);
+                
+            }
+
+            function linkArc(d) {
+              var x1 = d.source.x,
+                  y1 = d.source.y,
+                  x2 = d.target.x,
+                  y2 = d.target.y,
+                  dx = x2 - x1,
+                  dy = y2 - y1,
+                  dr = Math.sqrt(dx * dx + dy * dy),
+                   
+                   // Defaults for normal edge.
+                  drx = dr,
+                  dry = dr,
+                  xRotation = 0, // degrees
+                  largeArc = 0, // 1 or 0
+                  sweep = 1; // 1 or 0
+                  
+                  // Self edge.
+                  if ( dx === 0 && dy === 0 ) {
+                    // Fiddle with this angle to get loop oriented.
+                    xRotation = -45;
+
+                    // Needs to be 1.
+                    largeArc = 1;
+
+                    // Change sweep to change orientation of loop. 
+                    //sweep = 0;
+
+                    // Make drx and dry different to get an ellipse
+                    // instead of a circle.
+                    drx = 30;
+                    dry = 20;
+
+                    // For whatever reason the arc collapses to a point if the beginning
+                    // and ending points of the arc are the same, so kludge it.
+                    x2 = x2 + 1;
+                    y2 = y2 + 1;
+                  } 
+                  
+              return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+            }
+
+            function transform(d) {
+              return "translate(" + d.x + "," + d.y + ")";
+            }
+            }
+            function clearNodes() {
+                nodes = {};
+                links = [];
+                force.start();
+                d3.timer(force.resume);
+            }
+
+            function codeChange() {
+                selectedCode = this.value;
+                clearNodes();
+                updateNodes();
+            }
+            });
+        </script>
+        
+    </body>
+</html>

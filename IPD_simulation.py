@@ -81,7 +81,7 @@ def main():
     # whether or not all agents will have the max number of states
     all_max = True 
     rounds = 25
-    generations = 400
+    generations = 50
     simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
@@ -247,7 +247,7 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
 
 def write_html(json_list): 
     #print json_list["0"]
-    html_template = open("graph009template.html", "r")
+    html_template = open("IPD_output\graph009template.html", "r")
     html_template_string = html_template.read()
     html_template.close()
     custom = 'var allData='+''+" {'0': {"+'\n'
@@ -262,7 +262,7 @@ def write_html(json_list):
     total = html_template_string % {"jsonData": custom}'''
     
     total=html_template_string
-    output_file = open("graph009.html", "w")
+    output_file = open("IPD_output\graph009.html", "w")
     output_file.seek(0)
     output_file.truncate() # empties file
     output_file.write(total)
@@ -286,7 +286,7 @@ def draw_to_browser(graph_list, stats):
         j1, j2 = round(graph_list[i][1][0], 4), round(graph_list[i][1][1], 4)
         jay1, jay2 = j1, j2
         if j1 + j2 > 1: jay1, jay2 = (1 - j2, 1 - j1)
-        text = str(i + 1) + " - (" + str(jay1) + "," + str(jay2) + ")"
+        text = str(i + 1)  #+ " - (" + str(jay1) + "," + str(jay2) + ")"
         data2.append({"text": text, "value": str(i + 1)})
             
         # print d
@@ -300,10 +300,10 @@ def draw_to_browser(graph_list, stats):
     # print d 
     # write json
     write_html(data)
-    json.dump(data, open('data.json', 'w'))
+    json.dump(data, open('IPD_output\data.json', 'w'))
     print('Wrote node-link JSON data to temp.json')
     # open URL in running web browser
-    http_server.load_url('graph009.html')
+    http_server.load_url('IPD_output\graph009.html')
     print('Or copy all files to webserver and load graph.html')
 
 def draw_sim_charts(stats):
@@ -317,7 +317,7 @@ def draw_sim_charts(stats):
     ax.set(ylabel = "Average score per turn")
     ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom = 0.22)
-    plt.savefig("images/historical.png") 
+    plt.savefig("IPD_output/images/historical.png") 
     
     plt.clf()
     plt.cla()
@@ -333,7 +333,7 @@ def draw_sim_charts(stats):
     ax.set(ylabel = "Average sentience")
     ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom = 0.22)
-    plt.savefig("images/sentience.png") 
+    plt.savefig("IPD_output/images/sentience.png") 
     
     plt.clf()
     plt.cla()
@@ -347,7 +347,7 @@ def draw_sim_charts(stats):
     ax.set(ylabel = "percent coop/defect")
     ax.set_xlabel("Generation")
     plt.gcf().subplots_adjust(bottom = 0.22)
-    plt.savefig("images/cooppct.png") 
+    plt.savefig("IPD_output/images/cooppct.png") 
     
     return 
     
