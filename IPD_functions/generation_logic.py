@@ -33,7 +33,7 @@ def timing_generation(f):
     return wrap      
 
 #@timing_round
-def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
+def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=False):
     """Pairs agents off to go play a game so that each agent plays one game per
     round. All games are of the same length in a given round, the strategies
     shouldn't be affected.
@@ -57,8 +57,7 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
         - Could likely be sped up
     """
     
-    # Shuffle agents
-    r.shuffle(agents)
+   
     
     stats=[0, #cooperations
            0, #defections
@@ -74,16 +73,16 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
         gamestats = play_game(agents[i], agents[i + 1], game, turns = turns, 
                               noise = noise)
 
-        stats[0] += gamestats[0]
-        stats[1] += gamestats[1]
-
-    stats[2]= turns + 1 
-    return stats # since the first turn in games isn't counted
+        stats[0] += gamestats[0] #cooperations
+        stats[1] += gamestats[1] #defections
+    
+    stats[2]= turns 
+    return stats 
 
 #@timing_generation    
 def run_generation(agents, game, evol, count=64, rounds=100, w=0.9, 
                    max_states=8, all_max=False, start_states=2, last_gen=False, 
-                   noise=True):
+                   noise=False):
     """Runs a single generation.
 
     Args:
@@ -117,6 +116,8 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     
     # play the game
     for i in range(rounds):
+        # Shuffle agents
+        r.shuffle(agents)
         round_stats = play_round(agents, game, w = w, 
                                                 all_max = all_max, 
                                                 max_states = max_states, 
@@ -126,8 +127,10 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
         turn_count += round_stats[2]
     
     # sort by scores
-    agents.sort(key = lambda x: x.score, reverse = True) #highest scores first
-
+    agents.sort(key = lambda x: x.score +r.random(), reverse = True) #highest scores first , random to break ties , could likely be done better
+    
+    #for agent in agents:
+    #    print agent.score
     top_scores=[]
     winners=[]
     offspringses=[]
@@ -154,6 +157,7 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     avg_score = float(sum(agent.score for agent in agents)) / (count * turn_count)
     avg_pop_coop= float(cooperations) / (count * turn_count)
     avg_pop_defect= float(defections) / (count * turn_count)
+    print avg_pop_coop
     # print avg_score
     # should return all stats in one tuple, preferably a labelled one
     batting_avg = [float(x) / turn_count for x in top_scores]
@@ -183,60 +187,67 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     next_gen += generate_agents(count = evol[2], max_states = start_states, 
                                 all_max = True)
     #print len(next_gen)
-    #print next_gen
-    #raw_input('Press <ENTER> to continue')    
+    '''for agent in agents:
+        print agent, agent.score , float(agent.score)/turn_count
+    for noob in next_gen:
+        print noob, noob.score , float(noob.score)/turn_count
+    raw_input('Press <ENTER> to continue')  '''  
     
     return (next_gen, top_scores, stats)    
 
 
 def reproduce(agent, all_max=False, max_states=8):
     # returns a mutated offspring
-    offspring=Agent( ID=agent.ID, behaviour=agent.behaviour,joss_ann=agent.joss_ann)
+    behaviour_list=[]
+    for state in agent.behaviour:
+        behaviour_list.append(list(state))
+    joss_ann_list=list(agent.joss_ann)
     states = len(agent.behaviour) 
-    mutation = r.randint(0, 199)
+    mutation = r.randint(0, 1099)
     mutation_state = r.randint(1, states)
     if 0 <= mutation < 10 and states > 1:
         #remove a state
-        removed_state=offspring.behaviour.pop(mutation_state-1)
+        removed_state=behaviour_list.pop(mutation_state-1)
         defect_dest = removed_state[2] # be careful with this stuff it can break super easily :'(
         coop_dest = removed_state[1]
-        for i in range(len(offspring.behaviour)):
-            if offspring.behaviour[i][1]== mutation_state:
-                if coop_dest==mutation_state: offspring.behaviour[i][1] =offspring.behaviour[i][1]
-                else : offspring.behaviour[i][1]= coop_dest
-            if offspring.behaviour[i][2] == mutation_state:
-                if defect_dest==mutation_state: offspring.behaviour[i][2] =offspring.behaviour[i][2]
-                else: offspring.behaviour[i][2] = defect_dest
+        for i in range(len(behaviour_list)):
+            if behaviour_list[i][1]== mutation_state:
+                if coop_dest==mutation_state: behaviour_list[i][1] =behaviour_list[i][1]
+                else : behaviour_list[i][1]= coop_dest
+            if behaviour_list[i][2] == mutation_state:
+                if defect_dest==mutation_state: behaviour_list[i][2] =behaviour_list[i][2]
+                else: behaviour_list[i][2] = defect_dest
 
         for i in range(mutation_state ,  states + 2): # lol be careful with this stuff it's risky business!
             #we don't want to overwrite the starting info so we start at 2
-            for state in offspring.behaviour: 
-                if state[1] == i:
+            for state in behaviour_list: 
+                if state[1] == i and i!=1:
                     state[1] =i-1
-                if state[2] == i:
+                if state[2] == i and i!=1:
                     state[2]  = i-1
 
     elif 9 < mutation < 25 and states < max_states:
         # add a state
-        offspring.behaviour.append([r.randint(0,1), r.randint(1, states + 1), r.randint(1, states + 1)])
+        behaviour_list.append([r.randint(0,1), r.randint(1, states + 1), r.randint(1, states + 1)])
     elif 24 < mutation < 45  or 99 < mutation < 121:
         # change the defect joss_ann noise parameters +-0.1
-        j1, j2 = (agent.joss_ann[0], max(min(agent.joss_ann[1] - 0.1 + 0.2 * r.random(), 1.0), 0.0))
-        offspring.joss_ann = (j1, j2)
+        j1, j2 = (joss_ann_list[0], max(min(joss_ann_list[1] - 0.1 + 0.2 * r.random(), 1.0), 0.0))
+        joss_ann_list = (j1, j2)
     elif 120 < mutation < 161:
         # change the  coop joss_ann noise parameters +-0.1
-        j1, j2 =(max(min(agent.joss_ann[0] - 0.1 + 0.2 * r.random(), 1.0), 0.0), agent.joss_ann[1])
-        offspring.joss_ann = (j1, j2)
+        j1, j2 =(max(min(joss_ann_list[0] - 0.1 + 0.2 * r.random(), 1.0), 0.0),joss_ann_list[1])
+        joss_ann_list = (j1, j2)
     elif 44 < mutation < 60:
         # change the state move
-        offspring.behaviour[mutation_state - 1][0] = int(not agent.behaviour[mutation_state - 1][0])
+        behaviour_list[mutation_state - 1][0] = int(not agent.behaviour[mutation_state - 1][0])
     elif 59 < mutation < 80:
         # change the state coop destination
-        offspring.behaviour[mutation_state - 1][1] = (agent.behaviour[mutation_state - 1][1] + r.randint(0, states - 1)) % states + 1
+        behaviour_list[mutation_state - 1][1] = (behaviour_list[mutation_state - 1][1] + r.randint(0, states - 1)) % states + 1
     elif 79 < mutation < 100 :
         # change the state deceive destination
-        offspring.behaviour[mutation_state - 1][2] = (agent.behaviour[mutation_state - 1][2] + r.randint(0, states - 1)) % states + 1
+        behaviour_list[mutation_state - 1][2] = (behaviour_list[mutation_state - 1][2] + r.randint(0, states - 1)) % states + 1
     
+    offspring=Agent( ID=agent.ID, behaviour=tuple(behaviour_list),joss_ann=tuple(joss_ann_list))
     return offspring
 
     

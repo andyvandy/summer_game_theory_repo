@@ -80,13 +80,13 @@ def main():
     max_states = 6
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
-    all_max = True 
+    all_max = False 
     rounds = 10
     generations = 250
     simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
-    evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
+    evolution_settings = (24,23, 1) # (breed, survive, newcommers)
     
     
     run_all_simulations(game = game_matrix,
@@ -104,7 +104,7 @@ def main():
 
 def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, 
                         w=0.9, generations=100, start_states=2, max_states=8, 
-                        all_max=False, noise=True):  
+                        all_max=False, noise=False):  
     if number_of_simulations==1:
         (result, ranks, stats) = run_simulation(game = game, evol = evol, 
                                                 count = count, rounds = rounds, 
@@ -188,7 +188,7 @@ def write_overall_data(stats):
     
 def run_simulation( game, evol, count=64, rounds=100, w=0.9, 
                    generations=100, start_states=2, max_states=8, all_max=False,
-                   noise=True, verbose=False):
+                   noise=False, verbose=False):
                    
     """
     Runs the simulation.
@@ -218,8 +218,8 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
     
     #initialize agents
     agents = generate_agents(count = count, 
-                             max_states = start_states, all_max = True,
-                             noise = True)
+                             max_states = start_states, all_max = False,
+                             noise = noise)
     
     
     simulation_stats = [[], [0], [], [], [],[],[]]
@@ -366,18 +366,19 @@ def create_graph_of_agent(agent):
     # print nx.number_of_nodes(G)
 
     for i in range(nx.number_of_nodes(G)):
+        
         active_nodes = list(set(active_nodes + next_nodes))
         next_nodes = []
 
         for node in active_nodes:          
             next_nodes += G.successors(node) #0 is predecessors, 1 is successors
-    
+            #print "next_nodes ",next_nodes
     #print active_nodes
     #active_nodes=list(set(sorted(active_nodes)))
     
     #print active_nodes
     #print nodes
-   # print edges
+    #print edges
     
     
     extra_nodes = sorted(list(set(range(1, nx.number_of_nodes(G) +1)) 

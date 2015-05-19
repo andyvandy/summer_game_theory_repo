@@ -1,7 +1,7 @@
 import random as r
 from class_definitions import Agent
 
-def generate_agents(count=64, max_states=8, all_max=False, noise=True):
+def generate_agents(count=64, max_states=8, all_max=False, noise=False):
     """Generates a list of agents.
 
     Args:
@@ -38,11 +38,11 @@ def generate_agents(count=64, max_states=8, all_max=False, noise=True):
         
         behaviour = []
         for j in range(states):
-            behaviour.append([r.randint(0, 1), 
+            behaviour.append((r.randint(0, 1), 
                               r.randint(1, states), 
-                              r.randint(1, states)])
+                              r.randint(1, states)))
         
-        agent = Agent((1, i), behaviour, joss_ann_parameters)
+        agent = Agent((1, i), tuple(behaviour), joss_ann_parameters)
 
         result[i] = agent
         

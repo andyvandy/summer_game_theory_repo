@@ -10,7 +10,7 @@ def tally_score(moves, game):
     score2 = moves.count((0,0)) * R2 + moves.count((1, 0)) * S2 + moves.count((0,1)) * T2 + moves.count((1, 1)) * P2 
     return (score1, score2)
 
-def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
+def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     """Plays a game between agent1 and agent2
     
     Args:
@@ -24,6 +24,7 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
     Returns:
         
     """
+    if noise: print "Sadasdasd"
     # resets agent states
     agent1.current_state = 1
     agent2.current_state = 1
@@ -36,14 +37,14 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
         else: 
             # trippy geometry explains why we swap the values in this one
             joss_ann1 = (1 - agent1.joss_ann[1], 
-                         2 - agent1.joss_ann[1][0] - agent1.joss_ann[1][1]) 
+                         2 - agent1.joss_ann[0] - agent1.joss_ann[1]) 
 
         if sum(agent2.joss_ann) <= 1.0: 
             joss_ann2 = (agent2.joss_ann[0], 
                          agent2.joss_ann[0] + agent2.joss_ann[1])
         else: 
             joss_ann2 = (1 - agent2.joss_ann[1], 
-                         2 - agent2.joss_ann[1][1] - agent2.joss_ann[1][0])
+                         2 - agent2.joss_ann[1] - agent2.joss_ann[0])
     else:
         joss_ann1, joss_ann2 = (0, 0), (0, 0) 
 
@@ -53,28 +54,31 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
         # the states are updated based off of the other agent's last move
         if noise: 
             p1rand, p2rand = r.random(), r.random()
+            move= [0, 0]
+            if joss_ann1[0] < p1rand < joss_ann1[1]:
+                move[0] = 1
+            elif joss_ann1[1] <= p1rand: 
+                move[0] = agent1.move()
+                if move[0] == None:
+                    print "P1 empty move, current_state =", agent1.current_state
+                    print "behaviour =", agent1.behaviour 
+                    print "turn # = ", i
+            if joss_ann2[0] < p2rand < joss_ann2[1]: 
+                move[1] = 1
+            elif joss_ann2[1] <= p2rand: 
+                
+                if move[1] == None:
+                    print "P2 empty move, current_state =", agent2.current_state
+                    print "behaviour =", agent2.behaviour
+                    print "turn # = ", i
         else:
-            p1rand, p2rand = (1, 1)
+            move = (agent1.move(),agent2.move())
 
-        move = [0, 0]
+        
 
-        if joss_ann1[0] < p1rand <= joss_ann1[1]:
-            move[0] = 1
-        elif joss_ann1[1] < p1rand: 
-            move[0] = agent1.move()
-            if move[0] == None:
-                print "P1 empty move, current_state =", agent1.current_state
-                print "behaviour =", agent1.behaviour 
-                print "turn # = ", i
+        
 
-        if joss_ann2[0] < p2rand <= joss_ann2[1]: 
-            move[1] = 1
-        elif joss_ann2[1] < p2rand: 
-            move[1] = agent2.move()
-            if move[1] == None:
-                print "P2 empty move, current_state =", agent2.current_state
-                print "behaviour =", agent2.behaviour
-                print "turn # = ", i
+       
 
         moves.append(tuple(move))
         
@@ -112,10 +116,19 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=True):
             defections)
     #stat tracking ^
 
+    
+    
+    #print agent1.score, agent2.score
     result = tally_score(moves, game)
     agent1.score += result[0]
     agent2.score += result[1]
-
+    #print result
+    #print agent1.score, agent2.score
+    #print stats
+    #print agent1.behaviour
+    #print agent2.behaviour
+    #raw_input("sadasd")
+    #print len(moves)
     return stats
     
     
@@ -143,16 +156,35 @@ def test_game_logic():
     agent4 = Agent((0, 0), ((0, 1, 2), (1, 1, 2)), (0.34, 0.27))
     agent5 = Agent((0, 0), ((0, 2, 2), (1, 1, 1)), (0.34, 0.27))
     agent6 = Agent((0, 0), ((0, 2, 2), (1, 3, 3), (1, 1, 1), (1, 1, 3)), (0.34, 0.27))
-
-    assert isinstance((play_game(agent1, agent2, game, turns = 30,noise=False)[0]), tuple)
-    print play_game(agent1, agent2, game, turns =100,noise=False)[0]
-    assert play_game(agent1, agent2, game, turns = 25,noise=False)[0] == (25, 25)
-    assert play_game(agent1, agent3, game, turns = 40,noise=False)[0]  == (200,0)
-    assert test == play_game(agent4, agent5, game, turns = 12,noise=False)[0]
-    assert play_game(agent4, agent6, game, turns = 12,noise=False)[0]  == (22,27)
+    assert isinstance((play_game(agent1, agent2, game, turns = 30,noise=False)), tuple)
+    assert play_game(agent1, agent2, game, turns = 30,noise=False) == (0,60)
+    agent1.score,agent2.score = 0,0
+    
+    play_game(agent1, agent2, game, turns = 25,noise=False)
+    assert  (agent1.score,agent2.score)== (25, 25)
+    agent1.score,agent2.score = 0,0
+    
+    play_game(agent1, agent3, game, turns = 40,noise=False) 
+    assert  (agent1.score,agent3.score) == (200,0)
+    agent1.score,agent3.score = 0,0
+    
+    play_game(agent4, agent5, game, turns = 12,noise=False) 
+    assert (agent4.score,agent5.score) == (28,33)
+    agent4.score,agent5.score = 0,0
+    
+    play_game(agent4, agent6, game, turns = 12,noise=False)
+    assert  (agent4.score,agent6.score) == (22,27)
+    agent4.score,agent6.score = 0,0
+    
+    play_game(agent4, agent5, game, turns = 12,noise=False) 
+    play_game(agent4, agent6, game, turns = 12,noise=False)
+    play_game(agent5, agent6, game, turns = 6,noise=False)
+    assert  (agent4.score , agent5.score , agent6.score) ==( 50, 43, 42)
+    agent4.score, agent5.score, agent6.score = 0,0,0
+    
     return 'test passes'
 
 
 
-# print test_game_logic()    
+#print test_game_logic()    
 
