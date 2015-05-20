@@ -7,9 +7,9 @@ def tally_score(moves, game):
     R1, S1, T1, P1 = game[0][0], game[1][0], game[2][0], game[3][0]
     R2, T2, S2, P2 = game[0][1], game[1][1], game[2][1], game[3][1]
     play=(moves.count((0, 0)),moves.count((0, 1)),moves.count((1, 0))) #so that we don't call count too many times
-    plays=(play[0],play[1],play[2],len(moves)*2-play[0]-play[1]-play[2])
+    plays=(play[0],play[1],play[2],len(moves)-play[0]-play[1]-play[2]) #more avoiding count
     score1 = plays[0] * R1 + plays[1]  * S1 + plays[2] * T1+ plays[3]  * P1
-    score2 = plays[0] * R2 + plays[1] * S2 + plays[2] * T2 + plays[3] * P2 
+    score2 = plays[0] * R2 + plays[2] * S2 + plays[1] * T2 + plays[3] * P2 
     return (score1, score2)
 
 def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
@@ -62,9 +62,18 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             defections+=move1 +move2
             
 
-           
+            
 
             moves.append((move1,move2))
+            
+            if agent1.current_state== agent1.behaviour[agent1.current_state[1 + move2]-1]:
+                if agent2.current_state == agent2.behaviour[agent2.current_state [1 + move1]- 1]:
+                    #the agents are caught in an infinite loop, we can save some time
+                    #this is the biggest time saver ever. omg omg omg makes it like 30 times faster
+                    for j in range(turns-i-1):
+                        moves.append((move1,move2))
+                        defections+=move1 +move2
+                    break
             
             try: agent1.current_state = agent1.behaviour[agent1.current_state[1 + move2]-1]
             except: 
@@ -92,6 +101,9 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             #    print "p2", agent2.behaviour
             #    print moves, moves[i], moves[i][0]
             #    sys.exit("error occurred in play_game 3")
+
+            
+            
     if noise:
         for i in range(turns):
             # the states are updated based off of the other agent's last move
@@ -173,6 +185,7 @@ def test_game_logic():
     moves1 = ((0, 1), (0, 0))
     moves2 = ((0, 0), (0, 0), (0, 0), (0, 0))
     moves3 = ((0, 1), (1, 0), (1, 0), (1, 1), (0, 0))
+    print tally_score(moves1, game)
     assert tally_score(moves1, game) == (3, 8)
     assert tally_score(moves2, game) == (12, 12)
     assert tally_score(moves3, game) == (14, 9)
