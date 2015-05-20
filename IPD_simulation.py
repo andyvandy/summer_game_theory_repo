@@ -117,10 +117,9 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
                                                 noise = noise, verbose = True)
 
         simulation_results = zip(result, ranks, stats[1])
-        pretty_print(simulation_results, entries_per_line = 1)
 
         topAgent = result[0]
-        print topAgent.behaviour, ranks[0]
+        
         draw_to_browser(result,stats)
         return "complete"
     
