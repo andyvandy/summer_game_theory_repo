@@ -2,14 +2,17 @@ import sys
 import random as r
 from class_definitions import Agent
 
-def tally_score(moves, game):
+def tally_score(play_records, game):
     # returns the agents' respective scores
+    #needs to be fixed for games larger than 2x2
     R1, S1, T1, P1 = game[0][0], game[1][0], game[2][0], game[3][0]
     R2, T2, S2, P2 = game[0][1], game[1][1], game[2][1], game[3][1]
-    play=(moves.count((0, 0)),moves.count((0, 1)),moves.count((1, 0))) #so that we don't call count too many times
-    plays=(play[0],play[1],play[2],len(moves)-play[0]-play[1]-play[2]) #more avoiding count
-    score1 = plays[0] * R1 + plays[1]  * S1 + plays[2] * T1+ plays[3]  * P1
-    score2 = plays[0] * R2 + plays[2] * S2 + plays[1] * T2 + plays[3] * P2 
+    #play=(moves.count((0, 0)),moves.count((0, 1)),moves.count((1, 0))) #so that we don't call count too many times
+    #play0,play1,play2,play3=(play[0],play[1],play[2],len(moves)-play[0]-play[1]-play[2]) #more avoiding count
+    
+    play0,play1,play2,play3=play_records 
+    score1 = play0 * R1 + play1  * S1 + play2 * T1+ play3  * P1
+    score2 = play0 * R2 + play2 * S2 + play1 * T2 + play3 * P2 
     return (score1, score2)
 
 def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
@@ -47,9 +50,14 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
         else: 
             joss_ann2 = (1 - agent2.joss_ann[1], 
                          2 - agent2.joss_ann[1] - agent2.joss_ann[0])
-
-
-    moves = []
+    
+    playbook={ (0,0):0,  #needs to be fixed for games larger than 2x2 ,should maybe be passed as an argument
+                (0,1):1,
+                (1,0):2,
+                (1,1):3,
+                    }
+    play_records=[0,0,0,0]
+    moves = [0]*turns
     defections=0
        
     if not noise: #seperate versions for each condition to avoid constantly checking
@@ -64,15 +72,17 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
 
             
 
-            moves.append((move1,move2))
+            moves[i]=(move1,move2)
+            play_records[playbook[(move1,move2)]]+=1
             
             if agent1.current_state== agent1.behaviour[agent1.current_state[1 + move2]-1]:
                 if agent2.current_state == agent2.behaviour[agent2.current_state [1 + move1]- 1]:
                     #the agents are caught in an infinite loop, we can save some time
                     #this is the biggest time saver ever. omg omg omg makes it like 30 times faster
-                    for j in range(turns-i-1):
-                        moves.append((move1,move2))
-                        defections+=move1 +move2
+                    #for j in range(turns-i-1):
+                        #moves[i]=(move1,move2)
+                    defections+=(turns-i-1)*(move1 + move2)
+                    play_records[playbook[(move1,move2)]]+=turns-i-1    
                     break
             
             try: agent1.current_state = agent1.behaviour[agent1.current_state[1 + move2]-1]
@@ -166,7 +176,7 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     
     
     #print agent1.score, agent2.score
-    result = tally_score(moves, game)
+    result = tally_score(play_records, game)
     agent1.score += result[0]
     agent2.score += result[1]
     #print result
