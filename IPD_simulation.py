@@ -1,5 +1,6 @@
 """
 Author: Andrew van den Hoeven
+Contributors: Stuart Squires
 Date: May 2015
 
 Simulates multiple agents in an iterative prisoners dilemma, with evolving
@@ -19,20 +20,19 @@ Some notes from Andrew:
     Most parameters are in the main function, though the mutation logic is 
     contained in reproduce()
 
-    -1 is defect, 0 is cooperate throughout the code
+    1 is defect, 0 is cooperate throughout the code
     
     If something doesn't make sense please tell me!
     
-    maxstates =1 and noise= False with the snowdrift game produces a mixed population
-    of hawks and doves that oscillates around an equilibrium ratio as seen
-    in the literature
+    maxstates =1 and noise= False with the snowdrift game produces a mixed 
+    population of hawks and doves that oscillates around an equilibrium ratio as
+    seen in the literature
 
 Note from Stuart:
     If for some reason the web page doesn't launch automatically for you when
     the server starts, you can access it at http://localhost:8000/graph009.html
 
 TODO:
-    -create an agent class, will help with building history and family trees
     -make the sim end with a full gen played but skip the last reproduction so 
      that all the strategies can be ranked and ordered
     -interactive charts?
@@ -40,7 +40,6 @@ TODO:
     -add family trees across time?
     -add random element to state actions and transitions
     -add noise X (semi complete)
-    -time functions to determine what's inefficient
     -turn stats tuple into a named tuple
     -add cost for complexity?
 """
@@ -51,6 +50,7 @@ from generation_logic import play_round,run_generation
 from generate_agents import generate_agents
 from IPD_utilities import pretty_print
 from class_definitions import Agent
+from IPD_config import *
 
 import random as r
 import json                     # for d3 drawing
@@ -69,36 +69,16 @@ def main():
     1. Initializes variables.
     2. Runs simulation.
     """
-
-    # TODO: load all of these parameters from a file
-
-    # represents the value of choices
-    game_matrix = [[3, 3], [0, 5], [5, 0], [1, 1]]
-        #prisoner's dilema:[[3, 3], [0, 5], [5, 0], [1, 1]] 
-        #snowdrift/chicken game: [[3, 3], [1, 5], [5, 1], [0, 0]] 
-    number_of_agents = 64
-    max_states = 6
-    start_states = 1 #set to 1 for single simulation output 
-    # whether or not all agents will have the max number of states
-    all_max = False 
-    rounds = 10
-    generations = 250
-
-    simulations=1
-    w = 0.98 #probability of game going on another turn
-    noise = False # use Joss_ann noise or not
-    evolution_settings = (24,23, 1) # (breed, survive, newcommers)
     
-    
-    run_all_simulations(game = game_matrix,
-                        evol = evolution_settings,
-                        number_of_simulations = simulations,
-                        count = number_of_agents, 
-                        rounds = rounds, w = w,
-                        generations = generations, 
-                        start_states = start_states, 
-                        max_states = max_states, all_max = all_max, 
-                        noise = noise)
+    run_all_simulations(game = GAME_MATRIX,
+                        evol = EVOLUTION_SETTINGS,
+                        number_of_simulations = SIMULATIONS,
+                        count = NUMBER_OF_AGENTS, 
+                        rounds = ROUNDS, w = W,
+                        generations = GENERATIONS, 
+                        start_states = START_STATES, 
+                        max_states = MAX_STATES, all_max = ALL_MAX, 
+                        noise = NOISE)
 
     return "complete"
     
