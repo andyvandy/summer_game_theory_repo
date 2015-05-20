@@ -249,7 +249,7 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
 
 def write_html(json_list): 
     #print json_list["0"]
-    html_template = open("IPD_output\graph009template.html", "r")
+    html_template = open("IPD_output/graph009template.html", "r")
     html_template_string = html_template.read()
     html_template.close()
     custom = 'var allData='+''+" {'0': {"+'\n'
@@ -264,7 +264,7 @@ def write_html(json_list):
     total = html_template_string % {"jsonData": custom}'''
     
     total=html_template_string
-    output_file = open("IPD_output\graph009.html", "w")
+    output_file = open("IPD_output/graph009.html", "w")
     output_file.seek(0)
     output_file.truncate() # empties file
     output_file.write(total)
@@ -302,10 +302,10 @@ def draw_to_browser(agents, stats):
     # print d 
     # write json
     write_html(data)
-    json.dump(data, open('IPD_output\data.json', 'w'))
+    json.dump(data, open('IPD_output/data.json', 'w'))
     print('Wrote node-link JSON data to temp.json')
     # open URL in running web browser
-    http_server.load_url('IPD_output\graph009.html')
+    http_server.load_url('IPD_output/graph009.html')
     print('Or copy all files to webserver and load graph.html')
 
 def draw_sim_charts(stats):
