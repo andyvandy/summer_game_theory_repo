@@ -6,7 +6,8 @@ def tally_score(moves, game):
     # returns the agents' respective scores
     R1, S1, T1, P1 = game[0][0], game[1][0], game[2][0], game[3][0]
     R2, T2, S2, P2 = game[0][1], game[1][1], game[2][1], game[3][1]
-    plays=(moves.count((0, 0)),moves.count((0, 1)),moves.count((1, 0)),moves.count((1, 1))) #so that we don't call count too many times
+    play=(moves.count((0, 0)),moves.count((0, 1)),moves.count((1, 0))) #so that we don't call count too many times
+    plays=(play[0],play[1],play[2],len(moves)*2-play[0]-play[1]-play[2])
     score1 = plays[0] * R1 + plays[1]  * S1 + plays[2] * T1+ plays[3]  * P1
     score2 = plays[0] * R2 + plays[1] * S2 + plays[2] * T2 + plays[3] * P2 
     return (score1, score2)
@@ -49,7 +50,6 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
 
 
     moves = []
-    
     defections=0
        
     if not noise: #seperate versions for each condition to avoid constantly checking
@@ -57,17 +57,16 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             # the states are updated based off of the other agent's last move
             
             
-            move = (agent1.current_state[0],agent2.current_state[0])
+            (move1,move2) = (agent1.current_state[0],agent2.current_state[0])
 
-            defections+=move[0] +move[1]
-
+            defections+=move1 +move2
             
 
            
 
-            moves.append(move)
+            moves.append((move1,move2))
             
-            try: agent1.current_state = agent1.behaviour[agent1.current_state[1 + move[1]]-1]
+            try: agent1.current_state = agent1.behaviour[agent1.current_state[1 + move2]-1]
             except: 
                 # used for debugging faulty mutation mechanism
                 # the first number can vary here as it is used to track the player's
@@ -79,7 +78,7 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
                 print moves
                 sys.exit("error occurred in play_game 1")
             
-            try: agent2.current_state = agent2.behaviour[agent2.current_state [1 + move[0]]- 1]
+            try: agent2.current_state = agent2.behaviour[agent2.current_state [1 + move1]- 1]
             except: 
                 print "check your mutation logic"
                 print "p1", agent1.behaviour
@@ -115,7 +114,9 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
                     print "P2 empty move, current_state =", agent2.current_state
                     print "behaviour =", agent2.behaviour
                     print "turn # = ", i
+                    
             moves.append(tuple(move))
+            
             defections+= move[0] +move[1]
             try: agent1.current_state = agent1.behaviour[agent1.current_state - 1][1 + move[1]]
             except: 
