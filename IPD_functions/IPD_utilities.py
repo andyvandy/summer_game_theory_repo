@@ -11,7 +11,7 @@ def pretty_print(list, entries_per_line=4):
     # send line to output, here I will just print it
     print line
     
-def get_key(item):
+def get_score(item):
     """A very complex function.
     
     Args:

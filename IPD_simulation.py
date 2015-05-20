@@ -50,6 +50,7 @@ from game_logic import play_game,tally_score
 from generation_logic import play_round,run_generation
 from generate_agents import generate_agents
 from IPD_utilities import pretty_print
+from class_definitions import Agent
 
 import random as r
 import json                     # for d3 drawing
@@ -79,47 +80,47 @@ def main():
     max_states = 6
     start_states = 1 #set to 1 for single simulation output 
     # whether or not all agents will have the max number of states
-    all_max = True 
-    rounds = 25
-    generations = 50
+    all_max = False 
+    rounds = 10
+    generations = 250
+
     simulations=1
     w = 0.98 #probability of game going on another turn
     noise = False # use Joss_ann noise or not
-    evolution_settings = (24, 23, 1) # (breed, survive, newcommers)
+    evolution_settings = (24,23, 1) # (breed, survive, newcommers)
     
     
-    run_all_simulations( game = game_matrix,
-                             evol = evolution_settings,
-                             number_of_simulations=simulations,
-                             count = number_of_agents, 
-                             rounds = rounds, w = w,
-                             generations = generations, 
-                             start_states = start_states, 
-                             max_states = max_states, all_max = all_max, 
-                             noise = noise)
+    run_all_simulations(game = game_matrix,
+                        evol = evolution_settings,
+                        number_of_simulations = simulations,
+                        count = number_of_agents, 
+                        rounds = rounds, w = w,
+                        generations = generations, 
+                        start_states = start_states, 
+                        max_states = max_states, all_max = all_max, 
+                        noise = noise)
+
     return "complete"
     
-    
 
-def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, w=0.9, 
-                   generations=100, start_states=2, max_states=8, all_max=False,
-                   noise=True):  
+def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100, 
+                        w=0.9, generations=100, start_states=2, max_states=8, 
+                        all_max=False, noise=False):  
     if number_of_simulations==1:
-        (result, ranks, stats) = run_simulation( game = game,
-                             evol = evol,
-                             
-                             count = count, 
-                             rounds = rounds, w = w,
-                             generations = generations, 
-                             start_states = start_states, 
-                             max_states = max_states, all_max = all_max, 
-                             noise = noise,
-                             verbose=True)
+        (result, ranks, stats) = run_simulation(game = game, evol = evol, 
+                                                count = count, rounds = rounds, 
+                                                w = w, 
+                                                generations = generations, 
+                                                start_states = start_states, 
+                                                max_states = max_states, 
+                                                all_max = all_max, 
+                                                noise = noise, verbose = True)
+
         simulation_results = zip(result, ranks, stats[1])
         pretty_print(simulation_results, entries_per_line = 1)
 
         topAgent = result[0]
-        print topAgent, ranks[0]
+        print topAgent.behaviour, ranks[0]
         draw_to_browser(result,stats)
         return "complete"
     
@@ -185,7 +186,7 @@ def write_overall_data(stats):
     
 def run_simulation( game, evol, count=64, rounds=100, w=0.9, 
                    generations=100, start_states=2, max_states=8, all_max=False,
-                   noise=True, verbose=False):
+                   noise=False, verbose=False):
                    
     """
     Runs the simulation.
@@ -215,8 +216,9 @@ def run_simulation( game, evol, count=64, rounds=100, w=0.9,
     
     #initialize agents
     agents = generate_agents(count = count, 
-                             max_states = start_states, all_max = True,
-                             noise = True)
+                             max_states = start_states, all_max = False,
+                             noise = noise)
+    
     
     simulation_stats = [[], [0], [], [], [],[],[]]
     last_gen = False
@@ -269,21 +271,21 @@ def write_html(json_list):
     output_file.close()
 
 
-def draw_to_browser(graph_list, stats):
+def draw_to_browser(agents, stats):
     # print "# of strings"
     # print len(graphStrings)
     draw_sim_charts(stats)
     data1 = {}
     data2= []
-    for i in range(len(graph_list)):
+    for i in range(len(agents)):
         #print graphStrings[i]
         
-        G = create_graph_from_list(graph_list[i])
+        G = create_graph_of_agent(agents[i])
         d = json_graph.node_link_data(G)
         d["directed"] = 1
         d["multigraph"] = 1
         data1[str(i + 1)] = d
-        j1, j2 = round(graph_list[i][1][0], 4), round(graph_list[i][1][1], 4)
+        j1, j2 = round(agents[i].joss_ann[0], 4), round(agents[i].joss_ann[1], 4)
         jay1, jay2 = j1, j2
         if j1 + j2 > 1: jay1, jay2 = (1 - j2, 1 - j1)
         text = str(i + 1)  #+ " - (" + str(jay1) + "," + str(jay2) + ")"
@@ -352,9 +354,9 @@ def draw_sim_charts(stats):
     return 
     
     
-def create_graph_from_list(graph):
+def create_graph_of_agent(agent):
     # takes a string as input and outputs a Networkx graph object
-    (nodes, edges) = parse(graph)
+    (nodes, edges) = parse(agent)
     G = nx.MultiDiGraph()
     G.add_nodes_from(nodes)
     G.add_edges_from(edges)
@@ -363,20 +365,24 @@ def create_graph_from_list(graph):
     # print nx.number_of_nodes(G)
 
     for i in range(nx.number_of_nodes(G)):
+        
         active_nodes = list(set(active_nodes + next_nodes))
         next_nodes = []
 
         for node in active_nodes:          
             next_nodes += G.successors(node) #0 is predecessors, 1 is successors
-    
+            #print "next_nodes ",next_nodes
     #print active_nodes
     #active_nodes=list(set(sorted(active_nodes)))
     
     #print active_nodes
-
-    extra_nodes = list(set(range(1, nx.number_of_nodes(G) + 1)) 
-                       - set(active_nodes))
-
+    #print nodes
+    #print edges
+    
+    
+    extra_nodes = sorted(list(set(range(1, nx.number_of_nodes(G) +1)) 
+                       - set(active_nodes)), reverse=True)
+    #print extra_nodes
     for i in extra_nodes:
         G.remove_node(i)
         #print nx.number_of_nodes(G)
@@ -384,18 +390,18 @@ def create_graph_from_list(graph):
     return G
     
 
-def parse(graph_list):
+def parse(agent):
     #returns two lists of edges and a list of nodes
     #print graph_list
-    number_nodes = (len(graph_list) - 2) / 3
+    number_nodes = len(agent.behaviour)
     edge_list = []
     node_list = []
     for i in range(number_nodes):
         # (start, end, {'attribute': 'value'})
-        edge_list.append((i + 1, graph_list[3 * i + 3], {'type': 'C'})) 
-        edge_list.append((i + 1, graph_list[3 * i + 4], {'type': 'D'}))
+        edge_list.append((i +1, agent.behaviour[i][1], {'type': 'C'})) 
+        edge_list.append((i +1, agent.behaviour[i][2], {'type': 'D'}))
 
-        if graph_list[3 * i + 2]: node_list.append((i + 1, {'type': 'D'}))
+        if agent.behaviour[i][0]: node_list.append((i + 1, {'type': 'D'}))
         else: node_list.append((i + 1, {'type': 'C'}))
     
     return (node_list, edge_list)

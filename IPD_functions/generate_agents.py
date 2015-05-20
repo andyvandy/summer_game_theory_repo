@@ -1,6 +1,7 @@
 import random as r
+from class_definitions import Agent
 
-def generate_agents(count=64, max_states=8, all_max=False, noise=True):
+def generate_agents(count=64, max_states=8, all_max=False, noise=False):
     """Generates a list of agents.
 
     Args:
@@ -11,10 +12,7 @@ def generate_agents(count=64, max_states=8, all_max=False, noise=True):
         noise: whether or not to use Joss-Ann noise
     
     Returns:
-        result: A list of agents in the following format:
-            {current state}{initial move}
-            [{move for this state}{new state if coop}{new state if defect}]
-            for each state.
+        result: A list of agent objects
     """
 
     # Create a list of empty lists, length count
@@ -32,29 +30,41 @@ def generate_agents(count=64, max_states=8, all_max=False, noise=True):
             joss_ann_parameters = (0, 0)
         else:
             joss_ann_parameters = (r.random(), r.random())
-
+        
+        # the following block must be rewritten before use with agent objects:
         # agent=[1,joss_ann_parameters] + sum([[1,1,1] for j in range(states)],
         #  []) 
         # generates only hawks
-
-        # the sum flattens the list 
         
-
-        agent = [1, joss_ann_parameters] + sum([[r.randint(0,1), 
-                                                 r.randint(1, states), 
-                                                 r.randint(1, states)] for j in range(states)],
-                                                 []) 
+        behaviour = []
+        for j in range(states):
+            behaviour.append((r.randint(0, 1), 
+                              r.randint(1, states), 
+                              r.randint(1, states)))
+        
+        agent = Agent((1, i), tuple(behaviour), joss_ann_parameters)
 
         result[i] = agent
-
-        # print agent
         
     return result
     
-def test_generate_agents():
+def test_generate_agents(): 
+    """Runs some test cases for the agent generator.
+    
+    Returns:
+        'test passes': string is returned unless a test fails
+    """
+    
+    # Assures that the expected number of agents is generated.
     assert len(generate_agents(count = 38)) == 38
-    assert generate_agents()[7][1] in [0,1]
-    assert len(generate_agents(count = 12, max_states = 4, all_max = True)[5]) == 4 * 3 + 2
+    
+    # Asserts that the Joss-Ann noise is correctly disabled.
+    assert generate_agents(noise=False)[7].joss_ann[0] in [0,1]
+
+    # Asserts that the behavior list for an agent is the correct length.
+    test_list = generate_agents(count = 12, max_states = 4, all_max = True)
+    test_agent = test_list[5]
+    assert len(test_agent.behaviour) == 4
     return 'test passes'
 
 #print test_generate_agents()
