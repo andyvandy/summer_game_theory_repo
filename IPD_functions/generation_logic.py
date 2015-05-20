@@ -157,7 +157,7 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
     avg_score = float(sum(agent.score for agent in agents)) / (count * turn_count)
     avg_pop_coop= float(cooperations) / (count * turn_count)
     avg_pop_defect= float(defections) / (count * turn_count)
-    print avg_pop_coop
+    #print avg_pop_coop
     # print avg_score
     # should return all stats in one tuple, preferably a labelled one
     batting_avg = [float(x) / turn_count for x in top_scores]
