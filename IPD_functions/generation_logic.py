@@ -203,7 +203,7 @@ def reproduce(agent, all_max=False, max_states=8):
         behaviour_list.append(list(state))
     joss_ann_list=list(agent.joss_ann)
     states = len(agent.behaviour) 
-    mutation = r.randint(0, 1099)
+    mutation = r.randint(0, 199)
     mutation_state = r.randint(1, states)
     if 0 <= mutation < 10 and states > 1:
         #remove a state

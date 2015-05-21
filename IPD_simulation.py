@@ -61,6 +61,8 @@ import http_server  #more d3
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
+
 
 DEBUG = False
     
@@ -112,6 +114,8 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
             [],      
         ]
     
+    final_agents={}
+    
     for i in range(number_of_simulations):
         (result, ranks, simulation_stats) = run_simulation( game = game,
                              evol = evol,
@@ -125,13 +129,15 @@ def run_all_simulations(game, evol, number_of_simulations, count=64, rounds=100,
         stats[0].append(simulation_stats[0]) #avg turn score
         stats[1].append(simulation_stats[5]) #avg_pop_coop
         stats[2].append(simulation_stats[6]) #avg_pop_defect
-    
+        final_agents[i]=[x.behaviour for x in result[:20]] # param save the top 20 agents' behaviour
+        
+    log_data(stats,number_of_simulations,generations,final_agents)
     draw_overall_charts(stats)
     write_overall_data(stats)
     
 def draw_overall_charts(stats):
     #draws charts for data from multiple simulations
-    
+    #print stats[0]
     #chart 1 : average score per turn
     sns.set(style = "darkgrid", palette = "muted")
     fig = plt.subplots(1, 1, figsize = (4, 2.5))
@@ -249,7 +255,32 @@ def write_html(json_list):
     output_file.write(total)
     output_file.close()
 
+def log_data(stats,simulations,generations,final_agents):
+    #logs the stats data to json files that can be used later
+    avg_turn_score_dict={}
+    avg_coop_dict={}    
+    avg_defect_dict={}    
+    for i in range(simulations):
+        avg_turn_score_dict[str(i)]=stats[0][i]
+        avg_coop_dict[str(i)]=stats[1][i]
+        avg_defect_dict[str(i)]=stats[1][i]
+        
+    avg_turn_score_df=pd.DataFrame.from_dict(avg_turn_score_dict)
+    avg_turn_score_df.to_json("avgscore.json")
+    
+    avg_coop_df=pd.DataFrame.from_dict(avg_coop_dict)
+    avg_coop_df.to_json("avgcoop.json")
+    
 
+    avg_defect_df=pd.DataFrame.from_dict(avg_defect_dict)
+    avg_defect_df.to_json("avgdefect.json")
+
+    final_agents_df=pd.DataFrame.from_dict(final_agents)
+    final_agents_df.to_json("final_agents.json")
+    
+    return
+    
+    
 def draw_to_browser(agents, stats):
     # print "# of strings"
     # print len(graphStrings)
@@ -291,6 +322,7 @@ def draw_sim_charts(stats):
     #draws charts from a single simulation and saves files to be shown in html output_file
     
     #chart 1 : average score per turn
+
     sns.set(style = "darkgrid", palette = "muted")
     fig = plt.subplots(1, 1, figsize = (4, 2.5))
     b, g, r, p = sns.color_palette("muted", 4)
@@ -331,7 +363,7 @@ def draw_sim_charts(stats):
     plt.savefig("IPD_output/images/cooppct.png") 
     
     return 
-    
+
     
 def create_graph_of_agent(agent):
     # takes a string as input and outputs a Networkx graph object
