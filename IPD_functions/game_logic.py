@@ -1,6 +1,8 @@
 import sys 
 import random as r
 from class_definitions import Agent
+from collections import deque
+
 
 def tally_score(play_records, game):
     # returns the agents' respective scores
@@ -59,8 +61,9 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     play_records=[0,0,0,0]
     moves = [0]*turns
     defections=0
-       
-    if not noise: #seperate versions for each condition to avoid constantly checking
+    state_logs=deque([(0,0)]*4 )  # use this to keep track of infinitely repeating loops
+    first=True      #placeholder need to optimize this later
+    if not noise: #separate versions for each condition to avoid constantly checking
         for i in range(turns):
             # the states are updated based off of the other agent's last move
             
@@ -73,17 +76,27 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             
 
             moves[i]=(move1,move2)
+
             play_records[playbook[(move1,move2)]]+=1
+            state_logs.popleft() 
+            state_logs.append((agent1.current_state,agent2.current_state))
             
-            if agent1.current_state== agent1.behaviour[agent1.current_state[1 + move2]-1]:
-                if agent2.current_state == agent2.behaviour[agent2.current_state [1 + move1]- 1]:
-                    #the agents are caught in an infinite loop, we can save some time
-                    #this is the biggest time saver ever. omg omg omg makes it like 30 times faster
-                    #for j in range(turns-i-1):
-                        #moves[i]=(move1,move2)
-                    defections+=(turns-i-1)*(move1 + move2)
-                    play_records[playbook[(move1,move2)]]+=turns-i-1    
+            #check fro infinite loops , should add more cases
+            if state_logs[-1][0]==state_logs[-2][0] and state_logs[-1][1]==state_logs[-2][1]:
+                #the agents are caught in an infinite loop, we can save some time
+                #this is the biggest time saver ever. omg omg omg makes it like 30 times faster
+                #for j in range(turns-i-1):
+                    #moves[i]=(move1,move2)
+                defections+=(turns-i-1)*(move1 + move2)
+                play_records[playbook[(move1,move2)]]+=turns-i-1    
+                break
+            elif state_logs[-1][0]==state_logs[-3][0] and state_logs[-2][0]==state_logs[-4][0]  and  state_logs[-1][1]==state_logs[-3][1] and state_logs[-2][1]==state_logs[-4][1] :
+                defections+=((turns-i-1)/2)*(move1 + move2)
+                play_records[playbook[(move1,move2)]]+=(turns-i-1  )/2
+                #print "this happened!" # apparently it does
+                if first ==False:
                     break
+                first=False
             
             try: agent1.current_state = agent1.behaviour[agent1.current_state[1 + move2]-1]
             except: 
@@ -115,6 +128,7 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             
             
     if noise:
+        #separate version for noisy games since it's decently slower
         for i in range(turns):
             # the states are updated based off of the other agent's last move
 
@@ -138,6 +152,8 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
                     print "turn # = ", i
                     
             moves.append(tuple(move))
+            
+            play_records[playbook[(move[0],move[1])]]+=1
             
             defections+= move[0] +move[1]
             try: agent1.current_state = agent1.behaviour[agent1.current_state - 1][1 + move[1]]

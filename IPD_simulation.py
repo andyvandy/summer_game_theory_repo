@@ -51,13 +51,13 @@ from generate_agents import generate_agents
 from IPD_utilities import pretty_print
 from class_definitions import Agent
 from IPD_config import *
+import http_server  #to host the results locally
 
 import random as r
 import json                     # for d3 drawing
 import collections              # for data tracking
 import networkx as nx           # for making graphs
 from networkx.readwrite import json_graph #more d3
-import http_server  #more d3
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -263,7 +263,7 @@ def log_data(stats,simulations,generations,final_agents):
     for i in range(simulations):
         avg_turn_score_dict[str(i)]=stats[0][i]
         avg_coop_dict[str(i)]=stats[1][i]
-        avg_defect_dict[str(i)]=stats[1][i]
+        avg_defect_dict[str(i)]=stats[2][i]
         
     avg_turn_score_df=pd.DataFrame.from_dict(avg_turn_score_dict)
     avg_turn_score_df.to_json("avgscore.json")

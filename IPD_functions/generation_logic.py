@@ -198,14 +198,17 @@ def run_generation(agents, game, evol, count=64, rounds=100, w=0.9,
 
 def reproduce(agent, all_max=False, max_states=8):
     # returns a mutated offspring
+    #TODO remove the hardcoded probabilities and make it a parameter as to how mutations occur
     behaviour_list=[]
     for state in agent.behaviour:
         behaviour_list.append(list(state))
     joss_ann_list=list(agent.joss_ann)
     states = len(agent.behaviour) 
-    mutation = r.randint(0, 199)
+    mutation = r.randint(-5, 199)
     mutation_state = r.randint(1, states)
-    if 0 <= mutation < 10 and states > 1:
+    
+    #print behaviour_list
+    if -5 <= mutation < 10 and states > 1:
         #remove a state
         removed_state=behaviour_list.pop(mutation_state-1)
         defect_dest = removed_state[2] # be careful with this stuff it can break super easily :'(
@@ -226,9 +229,19 @@ def reproduce(agent, all_max=False, max_states=8):
                 if state[2] == i and i!=1:
                     state[2]  = i-1
 
-    elif 9 < mutation < 25 and states < max_states:
-        # add a state
-        behaviour_list.append([r.randint(0,1), r.randint(1, states + 1), r.randint(1, states + 1)])
+    elif 10 <= mutation < 25 and states < max_states:
+        # add a state in the middle of a link
+        if mutation <18:
+            #insert in coop dest of mutation state
+            dest = int(behaviour_list[mutation_state-1][1])
+            behaviour_list[mutation_state-1][1] = states+1
+            behaviour_list.append([r.randint(0,1),dest, r.randint(1, states + 1)])
+        else:
+            #insert in defect dest of mutation state
+            dest = int(behaviour_list[mutation_state-1][2])
+            behaviour_list[mutation_state-1][2] = states+1
+            behaviour_list.append([r.randint(0,1), r.randint(1, states + 1), dest])
+        
     elif 24 < mutation < 45  or 99 < mutation < 121:
         # change the defect joss_ann noise parameters +-0.1
         j1, j2 = (joss_ann_list[0], max(min(joss_ann_list[1] - 0.1 + 0.2 * r.random(), 1.0), 0.0))
