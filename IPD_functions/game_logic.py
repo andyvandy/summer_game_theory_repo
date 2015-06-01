@@ -19,7 +19,8 @@ def tally_score(play_records, game):
 
 def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     """Plays a game between agent1 and agent2
-    
+        adds the scores to the agent objects themselves
+        
     Args:
         agent1:
         agent2:
@@ -31,13 +32,13 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     Returns:
         
     """
+    
     if noise: print "Sadasdasd"
     # resets agent states
     agent1.current_state = agent1.behaviour[0]
     agent1.state_number = 1
     agent2.current_state = agent2.behaviour[0]
     agent1.state_number = 1
-    
     
     if noise:
         # makes sure probabilities make sense
@@ -66,20 +67,12 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
     moves = [0]*turns
     defections=0
     loop_detected=False
-    #state_logs=deque([(0,0)]*4 )  # use this to keep track of infinitely repeating loops
-    first=True      #placeholder need to optimize this later
+    
     if not noise: #separate versions for each condition to avoid constantly checking
         for i in range(turns):
             # the states are updated based off of the other agent's last move
-            
-            
             (move1,move2) = (agent1.current_state[0],agent2.current_state[0])
-
             defections+=move1 +move2
-            
-
-            
-
             moves[i]=(move1,move2)
 
             play_records[playbook[(move1,move2)]]+=1
@@ -103,26 +96,6 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
                 break
             agent1.state_number=next_state_agent1 +1
             agent2.state_number=next_state_agent2 +1
-            '''if  agent1.current_state == agent1.behaviour[agent1.current_state[1 + move2]-1]:
-                if  agent2.current_state == agent2.behaviour[agent2.current_state[1 + move1]-1]:
-                    #the agents are caught in an infinite loop, we can save some time
-                    #this is the biggest time saver ever. omg omg omg makes it like 30 times faster
-                    #for j in range(turns-i-1):
-                        #moves[i]=(move1,move2)
-                    #print "this happened!" 
-                    defections+=(turns-i-1)*(move1 + move2)
-                    play_records[playbook[(move1,move2)]]+=turns-i-1    
-                    break'''
-                
-            '''elif state_logs[-1][0]==state_logs[-3][0] and state_logs[-2][0]==state_logs[-4][0]  and  state_logs[-1][1]==state_logs[-3][1] and state_logs[-2][1]==state_logs[-4][1] :
-                defections+=((turns-i-1)/2)*(move1 + move2)
-                #this needs to be tested
-                play_records[playbook[(move1,move2)]]+=(turns-i-1  )/2
-                #print "this happened too!" # apparently it does
-                if first ==False:
-                    break
-                first=False'''
-                
             
             try: agent1.current_state = agent1.behaviour[next_state_agent1]
             except: 
@@ -145,23 +118,11 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
                 print moves[-1][0]
                 print moves
                 sys.exit("error occurred in play_game 2 ")
-            #if moves[i] not in [(0, 0), (0, 1), (1, 0), (1, 1)]: 
-            #    print "p1", agent1.behaviour
-            #    print "p2", agent2.behaviour
-            #    print moves, moves[i], moves[i][0]
-            #    sys.exit("error occurred in play_game 3")
-    #print play_records 
-    #print state_records
-    
-    #print "hhhm", loop_detected
+            
     if loop_detected:
         loop_length=len(state_records)
         counter=1%loop_length# took a while to realize this should be a 1 rather than 0
-        
         turn =loop_detected
-        #print turn 
-        #print turns
-        #print " tessstinggg 123 testtinng  123"
         while turn < turns-1:
             turn +=1
             #print turn
@@ -170,10 +131,9 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             defections+=move[0] +move[1]
             play_records[playbook[move]]+=1
             counter= (counter+1)%loop_length
-            
-    #print play_records        
-    #print moves       
+ 
     if noise:
+        #this likely needs an overhaul -andrew
         #separate version for noisy games since it's decently slower
         for i in range(turns):
             # the states are updated based off of the other agent's last move
@@ -235,19 +195,10 @@ def play_game(agent1, agent2, game, turns=100, all_max=False, noise=False):
             defections)
     #stat tracking ^
 
-    
-    
-    #print agent1.score, agent2.score
     result = tally_score(play_records, game)
     agent1.score += result[0]
     agent2.score += result[1]
-    #print result
-    #print agent1.score, agent2.score
-    #print stats
-    #print agent1.behaviour
-    #print agent2.behaviour
-    #raw_input("sadasd")
-    #print len(moves)
+
     return stats
     
     

@@ -3,36 +3,7 @@ from IPD_utilities import *
 from generate_agents import *
 from game_logic import *
 
-import time
 
-
-def timing_round(f):
-    def wrap(agents, game, w=0.9, max_states=8, all_max=False, noise=True):
-        time1 = time.time()
-        ret = f(agents, game, w=w, max_states=max_states, all_max=all_max, noise=noise)
-        time2 = time.time()
-        print '%s function took %0.3f ms' % (f.func_name, (time2-time1)*1000.0)
-        return ret
-    return wrap    
-
-def timing_generation(f):
-    def wrap(agents, game, evol, count=64, rounds=100, w=0.9, 
-                   max_states=8, all_max=False, start_states=2, last_gen=False, 
-                   noise=True):
-        time1 = time.time()
-        ret = f(agents, game, evol, count = count, 
-                rounds = rounds, w = w, 
-                start_states = start_states,
-                max_states = max_states, 
-                all_max = all_max, 
-                noise = noise,
-                last_gen = last_gen)
-        time2 = time.time()
-        print '%s function took %0.3f ms' % (f.func_name, (time2-time1)*1000.0)
-        return ret
-    return wrap      
-
-#@timing_round
 def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=False):
     """Pairs agents off to go play a game so that each agent plays one game per
     round. All games are of the same length in a given round, the strategies
@@ -79,7 +50,7 @@ def play_round(agents, game, w=0.9, max_states=8, all_max=False, noise=False):
     stats[2]= turns 
     return stats 
 
-#@timing_generation    
+   
 def run_generation(agents, game, evol, count=64, rounds=100, w=0.9, 
                    max_states=8, all_max=False, start_states=2, last_gen=False, 
                    noise=False):
@@ -206,8 +177,7 @@ def reproduce(agent, all_max=False, max_states=8):
     states = len(agent.behaviour) 
     mutation = r.randint(-5, 199)
     mutation_state = r.randint(1, states)
-    
-    #print behaviour_list
+
     if -3 <= mutation < 12 and states > 1:
         #remove a state
         removed_state=behaviour_list.pop(mutation_state-1)
