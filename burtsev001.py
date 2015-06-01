@@ -124,6 +124,11 @@ class Agent:
                          phenotype=offspring_phenotype,
                          parent_direction=self.direction))
         self.pay_energy(int(self.energy/2.0))
+
+
+class Stats:
+    def __init__(self):
+        self.number_of_agents =[len(AGENTS)]
         
 def offset_to_tile(offset):
     #takes in an offset coordinate as input and returns a list of 4 nested hexagons' pixel coordinates 
@@ -294,7 +299,8 @@ def run_simulation(starting_pop=25):
             #print input 
             output=agent.genes*input
             #print output
-            indices = [i for i, x in enumerate(output) if x==max(output)]
+            top_choice=max(output)
+            indices = [i for i, x in enumerate(output) if x==top_choice]
             action=r.choice(indices)
             #print indices,action
             if action ==0: agent.rest()

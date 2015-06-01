@@ -10,11 +10,11 @@ import http_server  #more d3
 # this needs to be polished
 
 def main():
-    json1_file = open('C:/Users/Andrew/Documents/programs/summer game theory/data/test/final_agents.json',"r+")
+    json1_file = open('C:/Users/Andrew/Documents/GitHub/summer_game_theory_repo/final_agents.json',"r")
     json1_str = json1_file.read()
     agent_dict=json.loads(json1_str)
     json1_file.close()
-    print agent_dict
+    print len(agent_dict)
     draw_to_browser(agent_dict)
 
 
@@ -37,7 +37,7 @@ def draw_to_browser(agents):
 
     data1 = {}
     data2= []
-    for i in range(0,10):
+    for i in range(0,250): #param
         for j in range(20):
             #print graphStrings[i]
             

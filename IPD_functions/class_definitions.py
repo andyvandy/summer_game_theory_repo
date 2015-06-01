@@ -24,7 +24,8 @@ class Agent(object):
         self.joss_ann = joss_ann
         self.behaviour = behaviour
         self.score = 0
-
+        self.state_number=1
+        
     def move(self):
         try: return self.behaviour[self.current_state - 1][0]
         except:

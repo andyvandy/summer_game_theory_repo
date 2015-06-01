@@ -208,7 +208,7 @@ def reproduce(agent, all_max=False, max_states=8):
     mutation_state = r.randint(1, states)
     
     #print behaviour_list
-    if -5 <= mutation < 10 and states > 1:
+    if -3 <= mutation < 12 and states > 1:
         #remove a state
         removed_state=behaviour_list.pop(mutation_state-1)
         defect_dest = removed_state[2] # be careful with this stuff it can break super easily :'(
@@ -229,7 +229,7 @@ def reproduce(agent, all_max=False, max_states=8):
                 if state[2] == i and i!=1:
                     state[2]  = i-1
 
-    elif 10 <= mutation < 25 and states < max_states:
+    elif 12 <= mutation < 25 and states < max_states:
         # add a state in the middle of a link
         if mutation <18:
             #insert in coop dest of mutation state
