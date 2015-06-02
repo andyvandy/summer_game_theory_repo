@@ -24,7 +24,7 @@ ___
 
 The main file is IPD_simulation.py, all settings are stored in IPD_functions/IPD_config.py 
 
-Setting the number of simulations to 1 will result in the above html output. Any greater number of simulations will save the data to a json file which can the nbe used to make graphs with IPD_functions/grapher.py and then viewed in a similar format as above using IPD_functions/viewer.py .
+Setting the number of simulations to 1 will result in the above html output. Any greater number of simulations will save the data to a json file which can then be used to make graphs with IPD_functions/grapher.py and then viewed in a similar format as above using IPD_functions/viewer.py .
 
 ##### Required packages
     -networkx
