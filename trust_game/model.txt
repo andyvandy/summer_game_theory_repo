@@ -1,57 +1,14 @@
 Game model so far:
-	Agent 1 plays Agent 2, Agent 1 takes the first turn. Chooses 0 <= a <= 1.
-	Agent 1 gives a to Agent 2, keeping 1 - a for themselves.
-	Agent 2 receives 2a, and returns a <= f(a) <= 2a to Agent 1, keeping
-	2a - f(a) for themselves.
-	Agent 1 then receives 3f(a), leaving them with a total of 1 - a + 3f(a).
+	Investor plays trustee, investor takes the first turn. Chooses a = 0 or 1.
+	Investor gives a to Agent 2, keeping 1 - a for themselves.
+	Trustee receives b*a, and returns 0 <= f(a) <= b*a to investor, keeping
+	b*a - f(a) for themselves.
+	Agent 1 then receives c*f(a), leaving them with a total of 1 - a + c*f(a).
 
-I want to iterate this game over a random number of turns. Players will switch positions between each round. Consider the second round of this game.
-	Agent 2 gives 0 <= a_1 <= 2 - f(a_0) to Agent 1. Essential chooses
-	0 <= b <= 1, and gives b * (2 - f(a_0)).
-	Agent 1 then receives 2 * a_1. Now has 1 - a_0 + 3f(a_0) + 2 * a_1. Can
-	return a fraction of this amount, keeping the rest for themselves.
-	Agent 2 then receives triple that fraction.
-
-The players will 
+I want to iterate this game over a random number of turns. Players will not 
+switch positions between each turn.
 
 With this model in mind, I need to consider how the agents will decide on the
 proportions to give. The first gift on the first round will obviously be
 predecided. Every gift after that could potentially depend on the history of
 gifts from the other agent.
-
-I could give each agent a function 0 <= f(a_0, ..., a_n) <= 1. I need to think
-of a good way to do this. This function and the initial gift a will be the
-traits that can mutate. I think a logistic function would be interesting to 
-start with. For a single variable, this would be
-	
-	f(x) = 1 / (1 + e^(-k(x - x_0)))
-
-This approaches 1 as x -> infinity and approaches 0 as x -> -infinity.
-
-My next step is to consider the parameters, and also consider how the history of
-the opponent can be used as input. The steepness parameter, k, could be either
-fixed or mutated. I want to take x_0 = 0, since I need to transform a_0, ..., 
-a_n into x anyway.
-
-Let's consider this transformation. We know each a_i ranges from 0 to 1, and x
-can range from -infinity to infinity. The transformation needs to have 
-parameters that can mutate with each new generation. Let's call the 
-transformation g.
-
-	Thought: A function like this could work:
-		g(a_0, ..., a_n) = c_0 * (a_0 - u_0) + ... + c_n * (a_n - u(n))
-			where the c_i and u_i terms can mutate.
-
-		A difficulty here is that we have a potentially infinite number of
-		turns but we can't exactly mutate an infinite number of parameters.
-
-		Solutions:
-			We could set all c_i equal and all u_i equal, but this will 
-			eliminate a lot of potentially infinite behaviour.
-
-			We could cap the number of rounds at some large number of turns.
-			Now we have a large but finite number of mutatable parameters. 
-			* I am thinking I will probably go with this.
-
-The fitness at the end of the generation will be based on the final sum each 
-agent left the game with.
