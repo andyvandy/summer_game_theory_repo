@@ -10,7 +10,7 @@ from trust_config import *
 
 def main():
     print "Beginning simulation..."
-    # Calculate max number of rounds.
+    # Calculate max number of turns.
     theta = (1 - w)
     max_turns = int(round(-np.log(0.95) / theta))
     
@@ -20,9 +20,9 @@ def main():
 
     for i in range(GENERATIONS):
 
-        # Sets the number of rounds with an exponential distribution, with a 
+        # Sets the number of turns with an exponential distribution, with a 
         # maximum at the 95th percentile
-        rounds = min(int(round(r.expovariate(theta))) + 1, 
+        turns = min(int(round(r.expovariate(theta))) + 1, 
                  int(-np.log(0.05) / theta)))
         
         # Mutates the agents if necessary
@@ -33,7 +33,7 @@ def main():
 
         for j in range(NUMBER_OF_AGENTS / 2):
             game_stats = play_game(agent_list[j], agent_list[j + 1], b = B, 
-                                   rounds = rounds, reset = RESET)
+                                   turns = turns, reset = RESET)
             agent_list[j].score = game_score[0]
             agent_list[j + 1].score = game_score[1]
             agent_list[j].avg_gift = game_score[2]

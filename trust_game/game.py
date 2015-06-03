@@ -11,12 +11,12 @@ def play_game(agent_1, agent_2, b, turns, reset):
         b: the multiplier for the transfer
         turns: the number of turns to be played
         reset: a boolean determining whether or not the balance is reset for the
-            players each round
+            players each turn
 
     Returns:
         game_stats: a tuple containing (agent 1 score, 
                                         agent 2 score, 
-                                        agent_1_avg_gift, 
+                                        agent_1_avg_gifot, 
                                         agent_2_avg_gift)
     """
 
@@ -28,26 +28,26 @@ def play_game(agent_1, agent_2, b, turns, reset):
     agent_2_history = np.zeros(turns)
     agent_1_gifts = np.zeros(turns)
     agent_2_gifts = np.zeros(turns)
-    round_stats = np.zeros((turns, 4))
+    turn_stats = np.zeros((turns, 4))
 
     for turn in range(turns):
         if turn % 2 == 0:
-            round_stats[turn] = play_round(agent_1, agent_2, agent_1_balance,
+            turn_stats[turn] = play_turn(agent_1, agent_2, agent_1_balance,
                                             agent_2_balance, agent_1_history, 
                                             agent_2_history, b, turn)
-            agent_1_scores[turn] = round_stats[turn][0]
-            agent_2_scores[turn] = round_stats[turn][1]
+            agent_1_scores[turn] = turn_stats[turn][0]
+            agent_2_scores[turn] = turn_stats[turn][1]
 
         else:
-            round_stats[turn] = play_round(agent_2, agent_1, agent_2_balance,
+            turn_stats[turn] = play_turn(agent_2, agent_1, agent_2_balance,
                                             agent_1_balance, agent_2_history, 
                                             agent_1_history, b, turn)
 
-            agent_1_scores[turn] = round_stats[turn][0]
-            agent_2_scores[turn] = round_stats[turn][1]
+            agent_1_scores[turn] = turn_stats[turn][0]
+            agent_2_scores[turn] = turn_stats[turn][1]
 
-        agent_1_gifts[turn] = round_stats[turn][2]
-        agent_1_gifts[turn] = round_stats[turn][3]
+        agent_1_gifts[turn] = turn_stats[turn][2]
+        agent_1_gifts[turn] = turn_stats[turn][3]
 
         if reset:
             agent_1_balance, agent_2_balance = agent_2_balance, agent_1_balance
@@ -75,7 +75,7 @@ def play_game(agent_1, agent_2, b, turns, reset):
 
 def play_turn(investor, trustee, investor_balance, trustee_balance,
                investor_history, trustee_history, b, turn):
-    """Plays a single round of the trust game between investor and trustee.
+    """Plays a single turn of the trust game between investor and trustee.
 
     Args:
         investor, trustee: two agents to play together
