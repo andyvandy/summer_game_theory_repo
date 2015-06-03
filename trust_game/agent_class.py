@@ -11,7 +11,7 @@ class Agent(object):
         score: A float score associated with the agent
     """
 
-    def __init__(self, max_turns, initial_gift=r.random(), ID=None, 
+    def __init__(self, max_turns, initial_gift=r.randint(1,), genome_a=0 , genome_b=0, ID=None, 
                  parent_ID=None):
         """Inits Agent.
         """
@@ -20,10 +20,10 @@ class Agent(object):
         self.cash = 100
         self.initial_gift = initial_gift
         self.multipliers = np.ones(max_turns)
-        self.shifts = np.empty(max_turns)
-        self.shifts.fill(0.5)
+        self.genome_a=
+        self.genome_b=
 
-    def gift(self, turn, opponent_history):
+    def gift(self, turn, opponent_history , type=0):
 
         if turn == 0:
             return self.initial_gift
