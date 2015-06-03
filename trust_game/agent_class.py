@@ -11,16 +11,16 @@ class Agent(object):
         score: A float score associated with the agent
     """
 
-    def __init__(self, max_rounds, initial_gift=r.random(), ID=None, 
+    def __init__(self, max_turns, initial_gift=r.random(), ID=None, 
                  parent_ID=None):
-        """Inits Agent with ID, behaviour, Joss-Ann noise params, and parent ID
+        """Inits Agent.
         """
         self.ID = ID
         self.parent_ID = parent_ID
         self.cash = 100
         self.initial_gift = initial_gift
-        self.multipliers = np.ones(max_rounds)
-        self.shifts = np.empty(max_rounds)
+        self.multipliers = np.ones(max_turns)
+        self.shifts = np.empty(max_turns)
         self.shifts.fill(0.5)
 
     def gift(self, turn, opponent_history):
