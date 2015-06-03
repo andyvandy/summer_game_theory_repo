@@ -2,14 +2,14 @@ import random as r
 import numpy as np
 from agent_class import *
 
-def play_game(agent_1, agent_2, b, rounds, reset):
+def play_game(agent_1, agent_2, b, turns, reset):
     """Plays an iterated trust game between Agent 1 and Agent 2. Agent 1 plays
     as investor first.
 
     Args:
         agent_1, agent_2: two agents to play together.
         b: the multiplier for the transfer
-        rounds: the number of rounds to be played
+        turns: the number of turns to be played
         reset: a boolean determining whether or not the balance is reset for the
             players each round
 
@@ -22,15 +22,15 @@ def play_game(agent_1, agent_2, b, rounds, reset):
 
     agent_1_balance = 100.
     agent_2_balance = 0.
-    agent_1_scores = np.zeros(rounds)
-    agent_2_scores = np.zeros(rounds)
-    agent_1_history = np.zeros(rounds)
-    agent_2_history = np.zeros(rounds)
-    agent_1_gifts = np.zeros(rounds)
-    agent_2_gifts = np.zeros(rounds)
-    round_stats = np.zeros((rounds, 4))
+    agent_1_scores = np.zeros(turns)
+    agent_2_scores = np.zeros(turns)
+    agent_1_history = np.zeros(turns)
+    agent_2_history = np.zeros(turns)
+    agent_1_gifts = np.zeros(turns)
+    agent_2_gifts = np.zeros(turns)
+    round_stats = np.zeros((turns, 4))
 
-    for turn in range(rounds):
+    for turn in range(turns):
         if turn % 2 == 0:
             round_stats[turn] = play_round(agent_1, agent_2, agent_1_balance,
                                             agent_2_balance, agent_1_history, 
@@ -73,7 +73,7 @@ def play_game(agent_1, agent_2, b, rounds, reset):
     return game_stats
 
 
-def play_round(investor, trustee, investor_balance, trustee_balance,
+def play_turn(investor, trustee, investor_balance, trustee_balance,
                investor_history, trustee_history, b, turn):
     """Plays a single round of the trust game between investor and trustee.
 
@@ -82,10 +82,10 @@ def play_round(investor, trustee, investor_balance, trustee_balance,
         b: the multiplier for the first transfer
         investor_balance, trustee_balance: starting balances for the investor 
             and trustee
-        turn: the current round
+        turn: the current turn
 
     Returns:
-        round_stats: a tuple containing (investor score, 
+        turn_stats: a tuple containing (investor score, 
                                          trustee score, 
                                          investor_gift_fraction, 
                                          trustee_gift_fraction)
@@ -104,12 +104,12 @@ def play_round(investor, trustee, investor_balance, trustee_balance,
 
     investor_score = investor_score + (b * trustee_gift)
 
-    round_stats = (investor_score, 
+    turn_stats = (investor_score, 
                    trustee_score, 
                    investor_gift_fraction, 
                    trustee_gift_fraction)
 
-    return round_stats
+    return turn_stats
 
 
 def play_game_test():
