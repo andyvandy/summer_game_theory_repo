@@ -2,7 +2,7 @@ import random as r
 import numpy as np
 from agent_class import *
 
-def play_game(agent_1, agent_2, b, c, turns, swap):
+def play_game(agent_1, agent_2,  turns,**params):
     """Plays an iterated trust game between Agent 1 and Agent 2. Agent 1 plays
     as investor first.
 
@@ -20,45 +20,48 @@ def play_game(agent_1, agent_2, b, c, turns, swap):
                                         agent_1_avg_gifot, 
                                         agent_2_avg_gift)
     """
-
-    agent_1_balance = 10.
-    agent_2_balance = 0.
-    agent_1_scores = np.zeros(turns)
-    agent_2_scores = np.zeros(turns)
-    agent_1_history = np.zeros(turns)
-    agent_2_history = np.zeros(turns)
-    agent_1_gifts = np.zeros(turns)
-    agent_2_gifts = np.zeros(turns)
+    #print params
+    ENDOWMENT= params['ENDOWMENT']
+    MEMORY= params['MEMORY']
+    B=params['B']
+    SWAP=params['SWAP']
+    
+    
+    agent_1.cash,agent_2.cash= ENDOWMENT
+    agent_1_scores, agent_2_scores = np.zeros(turns), np.zeros(turns)
+    agent_1_history ,agent_2_history= np.zeros(turns), np.zeros(turns)
+    agent_1_gifts, agent_2_gifts = np.zeros(turns), np.zeros(turns)
     turn_stats = np.zeros((turns, 4))
 
     for turn in range(turns):
-        if swap and turn % 2 == 1:
-            turn_stats[turn] = play_turn(agent_2, agent_1, agent_2_balance,
-                                         agent_1_balance, agent_2_history, 
-                                         agent_1_history, b, c, turn)
+        if SWAP and turn % 2 == 1:
+            turn_stats[turn] = play_turn(agent_2, agent_1, agent_2_history, 
+                                         agent_1_history, turn,**params)
 
             agent_1_scores[turn] = turn_stats[turn][1]
             agent_2_scores[turn] = turn_stats[turn][0]
             agent_1_gifts = turn_stats[turn][3]
             agent_2_gifts = turn_stats[turn][2]
         else:
-            turn_stats[turn] = play_turn(agent_1, agent_2, agent_1_balance,
-                                            agent_2_balance, agent_1_history, 
-                                            agent_2_history, b, c, turn)
+            turn_stats[turn] = play_turn(agent_1, agent_2,  agent_1_history, 
+                                            agent_2_history, turn, **params)
 
             agent_1_scores[turn] = turn_stats[turn][0]
             agent_2_scores[turn] = turn_stats[turn][1]
             agent_1_gifts = turn_stats[turn][2]
             agent_2_gifts = turn_stats[turn][3]
 
-        if swap:
+        if SWAP:
+            #wait hwat? -a
             agent_1_balance, agent_2_balance = agent_2_balance, agent_1_balance
 
     agent_1_avg_gift = np.mean(agent_1_gifts)
     agent_2_avg_gift = np.mean(agent_2_gifts)
     agent_1_avg_score = np.mean(agent_1_scores)
     agent_2_avg_score = np.mean(agent_2_scores)
-
+    agent_1.score+=sum(agent_1_scores)
+    agent_2.score+=sum(agent_1_scores)
+    
     game_stats = (agent_1_avg_score, 
                   agent_2_avg_score, 
                   agent_1_avg_gift, 
@@ -67,8 +70,8 @@ def play_game(agent_1, agent_2, b, c, turns, swap):
     return game_stats
 
 
-def play_turn(investor, trustee, investor_balance, trustee_balance,
-               investor_history, trustee_history, b, c, turn):
+def play_turn(investor, trustee,
+               investor_history, trustee_history, turn, **params):
     """Plays a single turn of the trust game between investor and trustee.
 
     Args:
@@ -85,17 +88,19 @@ def play_turn(investor, trustee, investor_balance, trustee_balance,
                                          investor_gift_fraction, 
                                          trustee_gift_fraction)
     """
-
-    investor_gift = investor.gift(turn, trustee_history, type = 0)
+    B=params['B']
+    C=params['C']
+    
+    investor_gift = investor.gift(turn, trustee_history, type = 0,**params)
     investor_history[turn] = investor_gift
-    investor_score = investor_balance - investor_gift
+    investor_score = investor.cash - investor_gift
 
-    trustee_score = trustee_balance + (b * investor_gift)
-    trustee_gift = trustee.gift(turn, investor_history, type = 0)
+    trustee_score = trustee.cash + (B * investor_gift)
+    trustee_gift = trustee.gift(turn, investor_history, type = 1,**params)
     trustee_history[turn] = trustee_gift
     trustee_score = trustee_score - trustee_gift
 
-    investor_score = investor_score + (c * trustee_gift)
+    investor_score = investor_score + (C * trustee_gift)
 
     turn_stats = (investor_score,
                   trustee_score,
@@ -109,5 +114,6 @@ def play_game_test():
     """
     """
     try:
+        pass
     except:
         sys.exit("")
