@@ -13,11 +13,10 @@ def main():
     print "Beginning simulation..."
     # Calculate max number of turns.
     theta = (1 - W)
-    max_turns = int(round(-np.log(0.95) / theta)) # why? -andrew
+    max_turns = int(round(-np.log(0.95) / theta)) # 95th percentile
     
-    
-
     avg_gift = np.zeros(GENERATIONS)
+
     params={"theta":theta,
             "NUMBER_OF_AGENTS" : NUMBER_OF_AGENTS,
             "ROUNDS": ROUNDS,
@@ -30,13 +29,15 @@ def main():
             "MEMORY" : MEMORY, 
             "ENDOWMENT" : ENDOWMENT,
             "MUTATION_PARAMS" : MUTATION_PARAMS,
-        }
+            }
+
     agent_list = create_initial_agents(**params)
+
     for i in range(GENERATIONS):
-        # Mutates the agents if necessary 
-        if i :  #changed this from  i != 0 to just i since bool(i) is the same in theis case as bool( i != 0) - andrew
+        # Mutates the agents if necessary.  
+        if i:
             agent_list.sort(key = lambda x: x.score, reverse = True)
-            agent_list = mutate_agents(agent_list,**params) #changed this so that it just passes the full list as well as some mutation params -a
+            agent_list = mutate_agents(agent_list, **params)
 
         for _ in range(ROUNDS):
             # Sets the number of turns with an exponential distribution, with a 
@@ -44,7 +45,7 @@ def main():
             turns = min(int(round(r.expovariate(theta))) + 1, 
                      int(-np.log(0.05) / theta))
             
-            for j in xrange(0,NUMBER_OF_AGENTS,2): #(NUMBER_OF_AGENTS / 2) does half of them. (0,NUMBER_OF_AGENTS,2) counts by twos and does them all -a
+            for j in xrange(0, NUMBER_OF_AGENTS, 2):
                 game_stats = play_game(agent_list[j], agent_list[j + 1],
                                        turns = turns, **params)
                 '''agent_list[j].score += game_score[0]
