@@ -22,6 +22,7 @@ class Agent(object):
         self.parent_ID = parent_ID
         self.cash = 0 
         self.score = 0
+        
 
         if initial_gift == -1: 
             self.initial_gift = r.randint(0, params['ENDOWMENT'][0])
