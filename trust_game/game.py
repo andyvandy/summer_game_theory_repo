@@ -1,8 +1,9 @@
 import random as r
 import numpy as np
 from agent_class import *
+from log_utils import *
 
-def play_game(agent_1, agent_2,  turns,**params):
+def play_game(agent_1, agent_2,  turns, log_file, **params):
     """Plays an iterated trust game between Agent 1 and Agent 2. Agent 1 plays
     as investor first.
 
@@ -11,8 +12,7 @@ def play_game(agent_1, agent_2,  turns,**params):
         b: the multiplier for the first transfer
         c: the multiplier for the return transfer
         turns: the number of turns to be played
-        swap: a boolean determining whether or not the players swap roles
-            between turns
+        log_file: the log file to write to
 
     Returns:
         game_stats: a tuple containing (agent_1_avg_score, 
@@ -24,14 +24,17 @@ def play_game(agent_1, agent_2,  turns,**params):
     ENDOWMENT = params['ENDOWMENT']
     MEMORY = params['MEMORY']
     B = params['B']
+    C = params['C']
     SWAP = params['SWAP']
+    LOG = params['LOG']
     
-    
-    agent_1.cash,agent_2.cash = ENDOWMENT
+    agent_1.cash, agent_2.cash = ENDOWMENT
     agent_1_scores, agent_2_scores = np.zeros(turns), np.zeros(turns)
     agent_1_history ,agent_2_history = np.zeros(turns), np.zeros(turns)
     agent_1_gifts, agent_2_gifts = np.zeros(turns), np.zeros(turns)
     turn_stats = np.zeros((turns, 4))
+    investor_ID = agent_1.ID
+    trustee_ID = agent_2.ID
 
     for turn in range(turns):
         if SWAP and turn % 2 == 1:
@@ -54,14 +57,21 @@ def play_game(agent_1, agent_2,  turns,**params):
         if SWAP:
             # Swaps the endowments before the next turn if the agents are to
             # switch places.
-            agent_1_balance, agent_2_balance = agent_2_balance, agent_1_balance
+            agent_1_cash, agent_2_cash = agent_2_cash, agent_1_cash
+            investor_ID, trustee_ID = trustee_ID, investor_ID
+
+        if LOG:
+            write_turn_info(log_file, turn, investor_ID, trustee_ID, 
+                            ENDOWMENT[0], ENDOWMENT[1], turn_stats[turn][2], 
+                            turn_stats[turn][3], B, C)
+
 
     agent_1_avg_gift = np.mean(agent_1_gifts)
     agent_2_avg_gift = np.mean(agent_2_gifts)
     agent_1_avg_score = np.mean(agent_1_scores)
     agent_2_avg_score = np.mean(agent_2_scores)
-    agent_1.score+=sum(agent_1_scores)
-    agent_2.score+=sum(agent_1_scores)
+    agent_1.score += sum(agent_1_scores)
+    agent_2.score += sum(agent_1_scores)
     
     game_stats = (agent_1_avg_score, 
                   agent_2_avg_score, 

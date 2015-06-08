@@ -39,9 +39,7 @@ class Agent(object):
         corresponding to what action was take and 0s elsewhere. This is then 
         multiplied with the (#actions agent has available) X 
         [(#actions partner has available)*(size of memory)] matrix. The index 
-        with the resulting highest legal move is then chosen. Type refers to 
-        whether the agent is acting as a first mover (investor) or as a second 
-        mover(trustee/ contractor) 0 is the former, 1 the latter 
+        with the resulting highest legal move is then chosen.
         
         Args:
             turn: the current turn
@@ -68,8 +66,7 @@ class Agent(object):
 
             if len(opponent_history) < MEMORY:
                 # print opponent_history
-                opponent_history = list(opponent_history) + 
-                                   [0 for _ in range(8)]
+                opponent_history = list(opponent_history) + [0 for _ in range(8)]
 
             #print opponent_history
             #print genome.shape
