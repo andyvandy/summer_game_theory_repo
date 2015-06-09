@@ -49,7 +49,7 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
             
             turn_stats[turn] = play_turn(agent_1, agent_2,  agent_1_history, 
                                             agent_2_history, turn, **params)
-            print "hists",agent_1_history,agent_2_history
+            #print "hists",agent_1_history,agent_2_history
             agent_1_scores[turn] = turn_stats[turn][0]
             agent_2_scores[turn] = turn_stats[turn][1]
             agent_1_gifts[turn] = turn_stats[turn][2]
@@ -66,8 +66,8 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
                             ENDOWMENT[0], ENDOWMENT[1], turn_stats[turn][2], 
                             turn_stats[turn][3], B, C)
 
-    print agent_1_scores,agent_2_scores                        
-    print agent_1_gifts,agent_2_gifts
+    #print agent_1_scores,agent_2_scores                        
+    #print agent_1_gifts,agent_2_gifts
 
     agent_1_avg_gift = np.mean(agent_1_gifts)
     agent_2_avg_gift = np.mean(agent_2_gifts)
@@ -114,7 +114,7 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     trustee_score = trustee.cash + (B * investor_gift)
     trustee_gift = trustee.gift(turn, investor_history, type = 1,**params)
     trustee_history.append(trustee_gift)
-    print trustee_history
+    #print trustee_history
     trustee_score = trustee_score - trustee_gift
 
     investor_score = investor_score + (C * trustee_gift)
@@ -215,4 +215,4 @@ def play_game_test():
         sys.exit("")
         
         
-play_game_test()      
+#play_game_test()      

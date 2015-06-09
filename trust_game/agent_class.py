@@ -85,7 +85,10 @@ class Agent(object):
 
             #debug print input_vector
             #debug print input_vector.shape
-            output=list(genome*input_vector)
+            #output=list(genome*input_vector)
+            output_matrix=list(genome*input_vector)
+            output = [x.item(0) for x in output_matrix ]
+            #np.matrix(output).tolist()
             #debug print output    
             #print output
 
@@ -94,12 +97,24 @@ class Agent(object):
 
                 # this whole loop just makes sure you can create money if your 
                 # partner was stingy
+                dummy =0
                 while result > opponent_history[-1] * B: 
+                    dummy+=1
                     max_weight = max(output)
+                    
                     #debug print max_weight
                     result = output.index(max_weight)
+                    '''if dummy >100: 
+                        print bool(result > opponent_history[-1] * B)
+                        print output
+                        print max_weight
+                        print result
+                        print output[result]
+
+                        print opponent_history
+                        pause=raw_input("pause")'''
                     # to remove that one from the running in case it is too big
-                    output[result] -= max_weight 
+                    output[result] = output[result]-100
                     #debug print result
                 return result    
             else:
