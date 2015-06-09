@@ -12,4 +12,4 @@ LOG_DIR = "testing" # Name of log subdirectory
 MEMORY = 4    # How far back the agents remember
 # determine the mix of the new pop when mutating 
 # (# breed, # live but not breed, # newcommers)
-MUTATION_PARAMS= (25,0,0)    
+MUTATION_PARAMS= (12,12,0)    
