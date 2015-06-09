@@ -183,17 +183,17 @@ def play_game_test():
     
         # test 2- sequence should be: 2->,<-3  ,   0->,<-0  ,  3->,<-4
     test_agent2.cash, test_agent1.cash = ENDOWMENT
-    result=play_turn(test_agent2, test_agent1, [0,0,0], [0,0,0], turn=0,  **params)                               
+    result=play_turn(test_agent2, test_agent1, [], [], turn=0,  **params)                               
     print result
     assert result== (3,3,2,3)
     
     test_agent2.cash, test_agent1.cash = ENDOWMENT
-    result=play_turn(test_agent2, test_agent1, [2,0,0], [3,0,0], turn=1,**params)    
+    result=play_turn(test_agent2, test_agent1, [2], [3], turn=1,**params)    
     print result
     assert result== (2,0,0,0)
     
     test_agent2.cash, test_agent1.cash = ENDOWMENT
-    result=play_turn(test_agent2, test_agent1, [0,2,0], [0,3,0], turn=2,**params)    
+    result=play_turn(test_agent2, test_agent1, [0,2], [0,3], turn=2,**params)    
     print result
     assert result== (4,2,2,4)
     

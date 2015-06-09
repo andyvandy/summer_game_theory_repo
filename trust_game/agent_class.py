@@ -68,18 +68,21 @@ class Agent(object):
             opponent_history_padded=opponent_history
             if len(opponent_history) < MEMORY:
                 # print opponent_history
-                opponent_history_padded = list(opponent_history) + [-1 for _ in range(8)]
+                opponent_history_padded = list(opponent_history) + [-1 for _ in range(MEMORY-len(opponent_history))]
+            if len(opponent_history) > MEMORY:
+                opponent_history_padded =opponent_history[:MEMORY]
             
-            #print opponent_history
-            #print genome.shape
+            print opponent_history
+            print opponent_history_padded
+            print genome.shape
 
             input_vector = np.transpose(np.matrix([int(bool(
-                                        i == opponent_history_padded[(MEMORY *(MEMORY -i-1)) / 
-                                        genome.shape[1]])) 
+                                        i%(genome.shape[1]/MEMORY) == opponent_history_padded[-(MEMORY *i / 
+                                        genome.shape[1])])) 
                                         for i in range(genome.shape[1])]))
 
-            #print input_vector.shape
-
+            print input_vector
+            print input_vector.shape
             output=list(genome*input_vector)
             print output    
             #print output
