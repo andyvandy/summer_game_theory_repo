@@ -102,7 +102,9 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     B = params['B']
     C = params['C']
     
-    investor_gift = investor.gift(turn, trustee_history, type = 0,**params)
+    investor_gift = investor.gift(turn, trustee_history, type = 0,**params) #turn isn't used any more in the gift function -a
+    if investor_gift: print investor_gift
+    
     investor_history[turn] = investor_gift
     investor_score = investor.cash - investor_gift
 
@@ -123,8 +125,89 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
 
 def play_game_test():
     """
+    The more test cases we have, the better -A
+    
     """
+    
+    params={
+            
+            "B":3,
+            "C":1,
+            "SWAP" : False, 
+            "RESET" : False, 
+            "MEMORY" : 2,
+            "LOG" : False,
+            "ENDOWMENT" : (2,0),
+            }
+    
+    ENDOWMENT= params["ENDOWMENT"]
+
+    intial_genome_a_1= np.array([[0,5,4,4,4,5,6,4,8,9,10,11,12,13,],
+                                 [1,4,3,3,4,5,6,8,8,9,10,11,12,13,],
+                                 [2,2,2,3,4,5,6,7,8,9,10,11,12,13,],
+                                ])
+    intial_genome_b_1=np.array([[0,1,2,3,4,5],
+                                [2,1,2,3,4,5],
+                                [0,4,2,0,4,5],
+                                [0,3,3,5,4,5],
+                                [0,0,2,6,4,5],
+                                [0,1,2,3,5,5],
+                                [0,1,2,3,4,6],                              
+                                ])
+    test_agent1=Agent(intial_genome_a_1, intial_genome_b_1, ID = (0, 1), initial_gift=1, **params)
+    test_agent2=Agent(intial_genome_a_1, intial_genome_b_1, ID = (0, 2), initial_gift=2, **params)                      
+    
+        # test 1- sequence should be: 1->,<-2  ,   0->,<-0  ,  1->,<-3
+    test_agent1.cash, test_agent2.cash = ENDOWMENT
+    result=play_turn(test_agent1, test_agent2, [0,0,0], [0,0,0], turn=0,  **params)                               
+    assert isinstance(result, tuple)
+    print result
+    assert result== (3,1,1,2)
+    
+    test_agent1.cash, test_agent2.cash = ENDOWMENT
+    result=play_turn(test_agent1, test_agent2, [1,0,0], [2,0,0], turn=1,**params)    
+    print result
+    assert result== (2,0,0,0)
+    
+    test_agent1.cash, test_agent2.cash = ENDOWMENT
+    result=play_turn(test_agent1, test_agent2, [1,0,0], [2,0,0], turn=2,**params)    
+    print result
+    assert result== (4,0,1,3)
+    
+
+    result=play_game(test_agent1, test_agent2,  3, "", **params)
+    assert isinstance(result, tuple)
+    print result
+    assert result== (2,1.0/3,2.0/3,5.0/3)
+    
+    # test 2- sequence should be: 2->,<-3  ,   0->,<-0  ,  3->,<-4
+    test_agent2.cash, test_agent1.cash = ENDOWMENT
+    result=play_turn(test_agent2, test_agent1, [0,0,0], [0,0,0], turn=0,  **params)                               
+    print result
+    assert result== (3,3,2,3)
+    
+    test_agent2.cash, test_agent1.cash = ENDOWMENT
+    result=play_turn(test_agent2, test_agent1, [2,0,0], [3,0,0], turn=1,**params)    
+    print result
+    assert result== (2,0,0,0)
+    
+    test_agent2.cash, test_agent1.cash = ENDOWMENT
+    result=play_turn(test_agent2, test_agent1, [0,2,0], [0,3,0], turn=2,**params)    
+    print result
+    assert result== (4,2,2,4)
+    
+    result=play_game(test_agent1, test_agent2,  3, "", **params)
+    assert isinstance(result, tuple)
+    print result
+    assert result== (3,5.0/3,4.0/3,7.0/3)
+    
+    
+    
+    print "tests pass"
     try:
         pass
     except:
         sys.exit("")
+        
+        
+play_game_test()      

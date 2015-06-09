@@ -14,7 +14,7 @@ from log_utils import *
 def main():
     # Calculate max number of turns.
     theta = (1 - W)
-    max_turns = int(round(-np.log(0.95) / theta)) # 95th percentile
+    max_turns = int(round(-np.log(0.05) / theta)) # 95th percentile
     
     avg_gift = np.zeros(GENERATIONS)
 

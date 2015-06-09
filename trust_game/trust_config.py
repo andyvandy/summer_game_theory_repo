@@ -1,9 +1,9 @@
 W = 0.95    # Probability that the game goes on another turn
-NUMBER_OF_AGENTS = 50
-GENERATIONS = 10
-ROUNDS = 10    # Matchups per generation
-ENDOWMENT=(10,0)    # How much each player receives at the start of the game
-B = 3    # Multiplier for Investor -> Trustee
+NUMBER_OF_AGENTS = 36
+GENERATIONS = 100
+ROUNDS = 100   # Matchups per generation
+ENDOWMENT=(5,0)    # How much each player receives at the start of the game
+B = 5    # Multiplier for Investor -> Trustee
 C = 1    # Multiplier for Trustee -> Investor
 SWAP = False    # Whether or not agents switch roles after each turn
 RESET = False    # Whether or not the balance is stored or can still be used

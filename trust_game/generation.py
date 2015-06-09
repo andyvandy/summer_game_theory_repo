@@ -23,11 +23,11 @@ def init_agents(**params):
     
     agent_list = []
     
-    intial_genome_a = np.zeros((ENDOWMENT[0], 
-                                MEMORY * (ENDOWMENT[0] * B + ENDOWMENT[1])))
+    intial_genome_a = np.zeros((ENDOWMENT[0]+1, 
+                                MEMORY * ((ENDOWMENT[0]) * B +1 + ENDOWMENT[1])))
 
-    intial_genome_b = np.zeros((ENDOWMENT[0] * B + ENDOWMENT[1], 
-                                MEMORY * (ENDOWMENT[0])))
+    intial_genome_b = np.zeros(((ENDOWMENT[0]) * B +1 + ENDOWMENT[1], 
+                                MEMORY * (ENDOWMENT[0]+1)))
     
     for i in range(params['NUMBER_OF_AGENTS']):
         agent_list.append(Agent(intial_genome_a, intial_genome_b, ID = (0, i), 
@@ -43,7 +43,7 @@ def create_offspring(agent,**params):
     
     intial_genome_a = agent.genome_a + np.random.randint(-15,16,(ENDOWMENT[0],MEMORY*(ENDOWMENT[0]*B+ENDOWMENT[1])))
     intial_genome_b = agent.genome_b +np.random.randint(-15,16,(ENDOWMENT[0]*B+ENDOWMENT[1],MEMORY*(ENDOWMENT[0])))
-    retunr Agent(intial_genome_a, intial_genome_b, **params)
+    return Agent(intial_genome_a, intial_genome_b, **params)
     
 def create_initial_agents(**params):
     """Creates the initial generation of agents.
@@ -72,7 +72,7 @@ def mutate_agents(agent_list, **params):
         new_agent_list: a list of agents twice the size of agent_list
     """
     
-    MUTATION_PARAMS= params[MUTATION_PARAMS]
+    MUTATION_PARAMS= params["MUTATION_PARAMS"]
     return agent_list #temporary while we get the other stuff working
     new_agent_list = []
     
