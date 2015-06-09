@@ -23,6 +23,7 @@ def main():
             "ROUNDS": ROUNDS,
             "GENERATIONS":GENERATIONS,
             "max_turns":max_turns,
+            "A":A,
             "B":B,
             "C":C,
             "SWAP" : SWAP, 

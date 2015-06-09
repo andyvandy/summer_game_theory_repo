@@ -2,7 +2,8 @@ W = 0.95    # Probability that the game goes on another turn
 NUMBER_OF_AGENTS = 36
 GENERATIONS = 100
 ROUNDS = 100   # Matchups per generation
-ENDOWMENT=(5,0)    # How much each player receives at the start of the game
+ENDOWMENT = (1, 0)    # How much each player receives at the start of the game
+A = 10    # Multiplier for Investor balance after Investor -> Trustee gift
 B = 5    # Multiplier for Investor -> Trustee
 C = 1    # Multiplier for Trustee -> Investor
 SWAP = False    # Whether or not agents switch roles after each turn
@@ -13,3 +14,5 @@ MEMORY = 4    # How far back the agents remember
 # determine the mix of the new pop when mutating 
 # (# breed, # live but not breed, # newcommers)
 MUTATION_PARAMS= (12,12,0)    
+
+# For all or nothing, set A = B, ENDOWMENT = (1, 0)

@@ -61,7 +61,7 @@ def create_offspring(agent, generation, pos, **params):
     return Agent(intial_genome_a, intial_genome_b, ID = new_ID, 
                  parent_ID = agent.ID, **params)
     
-    
+
 def create_initial_agents(**params):
     """Creates the initial generation of agents.
 
@@ -86,11 +86,11 @@ def mutate_agents(agent_list, generation, **params):
         agent_list: a list of agents
 
     Returns:
-        new_agent_list: a list of agents twice the size of agent_list
+        new_agent_list: the list of agents for the new generation
     """
     
     MUTATION_PARAMS= params["MUTATION_PARAMS"]
-    #return agent_list #temporary while we get the other stuff working
+
     new_agent_list = []
     
     for i in range(MUTATION_PARAMS[0]):
