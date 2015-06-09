@@ -18,17 +18,21 @@ def init_agents(**params):
     # kwargs? - Andrew
     # Good question... you implemented this. :P -Stu 
     # lol but srsly if you figure it out lemme know aha -A
-    ENDOWMENT= params['ENDOWMENT']
-    MEMORY= params['MEMORY']
-    B=params['B'] 
+    ENDOWMENT = params['ENDOWMENT']
+    MEMORY = params['MEMORY']
+    B = params['B'] 
     
     agent_list = []
     
-    intial_genome_a = np.zeros((ENDOWMENT[0]+1, 
-                                MEMORY * ((ENDOWMENT[0]) * B +1 + ENDOWMENT[1])))
+    genome_a_rows = ENDOWMENT[0] + 1
+    genome_a_columns = MEMORY * (ENDOWMENT[0] * B + 1 + ENDOWMENT[1])
+    genome_a_shape = (genome_a_rows, genome_a_columns)
+    intial_genome_a = np.zeros(genome_a_shape)
 
-    intial_genome_b = np.zeros(((ENDOWMENT[0]) * B +1 + ENDOWMENT[1], 
-                                MEMORY * (ENDOWMENT[0]+1)))
+    genome_b_rows = ENDOWMENT[0] * B + 1 + ENDOWMENT[1]
+    genome_b_columns = MEMORY * (ENDOWMENT[0] + 1)
+    genome_b_shape = (genome_b_rows, genome_b_columns)
+    intial_genome_b = np.zeros(genome_b_shape)
     
     for i in range(params['NUMBER_OF_AGENTS']):
         agent_list.append(Agent(intial_genome_a, intial_genome_b, ID = (0, i), 
@@ -36,16 +40,27 @@ def init_agents(**params):
 
     return agent_list
 
-def create_offspring(agent,generation,pos,**params):
-    ENDOWMENT= params['ENDOWMENT']
-    MEMORY= params['MEMORY']
-    B=params['B'] 
-    new_ID=(generation,pos)
+def create_offspring(agent, generation, pos, **params):
+    ENDOWMENT = params['ENDOWMENT']
+    MEMORY = params['MEMORY']
+    B = params['B'] 
+    new_ID = (generation, pos)
     
-    intial_genome_a = agent.genome_a + np.random.randint(-15,16,(ENDOWMENT[0],MEMORY*(ENDOWMENT[0]*B+ENDOWMENT[1])))
-    intial_genome_b = agent.genome_b +np.random.randint(-15,16,(ENDOWMENT[0]*B+ENDOWMENT[1],MEMORY*(ENDOWMENT[0])))
-    return Agent(intial_genome_a, intial_genome_b, 
-                 ID=new_ID , parent_ID=agent.ID , **params)
+    genome_a_rows = ENDOWMENT[0] + 1
+    genome_a_columns = MEMORY * (ENDOWMENT[0] * B + 1 + ENDOWMENT[1])
+    genome_a_shape = (genome_a_rows, genome_a_columns)
+    intial_genome_a = agent.genome_a + np.random.randint(-15, 16, 
+                                                         genome_a_shape)
+
+    genome_b_rows = ENDOWMENT[0] * B + 1 + ENDOWMENT[1]
+    genome_b_columns = MEMORY * (ENDOWMENT[0] + 1)
+    genome_b_shape = (genome_b_rows, genome_b_columns)
+    intial_genome_b = agent.genome_b + np.random.randint(-15, 16, 
+                                                         genome_b_shape)
+
+    return Agent(intial_genome_a, intial_genome_b, ID = new_ID, 
+                 parent_ID = agent.ID, **params)
+    
     
 def create_initial_agents(**params):
     """Creates the initial generation of agents.
