@@ -46,9 +46,10 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
             agent_1_gifts[turn] = turn_stats[turn][3]
             agent_2_gifts[turn] = turn_stats[turn][2]
         else:
+            
             turn_stats[turn] = play_turn(agent_1, agent_2,  agent_1_history, 
                                             agent_2_history, turn, **params)
-
+            print "hists",agent_1_history,agent_2_history
             agent_1_scores[turn] = turn_stats[turn][0]
             agent_2_scores[turn] = turn_stats[turn][1]
             agent_1_gifts[turn] = turn_stats[turn][2]
@@ -65,6 +66,8 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
                             ENDOWMENT[0], ENDOWMENT[1], turn_stats[turn][2], 
                             turn_stats[turn][3], B, C)
 
+    print agent_1_scores,agent_2_scores                        
+    print agent_1_gifts,agent_2_gifts
 
     agent_1_avg_gift = np.mean(agent_1_gifts)
     agent_2_avg_gift = np.mean(agent_2_gifts)
@@ -111,6 +114,7 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     trustee_score = trustee.cash + (B * investor_gift)
     trustee_gift = trustee.gift(turn, investor_history, type = 1,**params)
     trustee_history.append(trustee_gift)
+    print trustee_history
     trustee_score = trustee_score - trustee_gift
 
     investor_score = investor_score + (C * trustee_gift)
@@ -171,15 +175,15 @@ def play_game_test():
     assert result== (2,0,0,0)
     
     test_agent1.cash, test_agent2.cash = ENDOWMENT
-    result=play_turn(test_agent1, test_agent2, [0,1], [0,2], turn=2,**params)    
+    result=play_turn(test_agent1, test_agent2, [1,0], [2,0], turn=2,**params)    
     print result
-    assert result== (2,4,2,2)
+    assert result== (2,2,1,1)
     
 
     result=play_game(test_agent1, test_agent2,  3, "", **params)
     assert isinstance(result, tuple)
     print result
-    assert result== (7.0/3,5.0/3,3.0/3,4.0/3)
+    assert result== (7.0/3,3.0/3,2.0/3,3.0/3)
     
         # test 2- sequence should be: 2->,<-3  ,   0->,<-0  ,  3->,<-4
     test_agent2.cash, test_agent1.cash = ENDOWMENT
@@ -193,7 +197,7 @@ def play_game_test():
     assert result== (2,0,0,0)
     
     test_agent2.cash, test_agent1.cash = ENDOWMENT
-    result=play_turn(test_agent2, test_agent1, [0,2], [0,3], turn=2,**params)    
+    result=play_turn(test_agent2, test_agent1, [2,0], [3,0], turn=2,**params)    
     print result
     assert result== (3,3,2,3)
     
@@ -211,4 +215,4 @@ def play_game_test():
         sys.exit("")
         
         
-#play_game_test()      
+play_game_test()      
