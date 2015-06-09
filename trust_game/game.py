@@ -43,16 +43,16 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
 
             agent_1_scores[turn] = turn_stats[turn][1]
             agent_2_scores[turn] = turn_stats[turn][0]
-            agent_1_gifts = turn_stats[turn][3]
-            agent_2_gifts = turn_stats[turn][2]
+            agent_1_gifts[turn] = turn_stats[turn][3]
+            agent_2_gifts[turn] = turn_stats[turn][2]
         else:
             turn_stats[turn] = play_turn(agent_1, agent_2,  agent_1_history, 
                                             agent_2_history, turn, **params)
 
             agent_1_scores[turn] = turn_stats[turn][0]
             agent_2_scores[turn] = turn_stats[turn][1]
-            agent_1_gifts = turn_stats[turn][2]
-            agent_2_gifts = turn_stats[turn][3]
+            agent_1_gifts[turn] = turn_stats[turn][2]
+            agent_2_gifts[turn] = turn_stats[turn][3]
 
         if SWAP:
             # Swaps the endowments before the next turn if the agents are to
@@ -150,7 +150,7 @@ def play_game_test():
     intial_genome_b_1=np.array([[0,1,2,3,4,5],
                                 [2,1,2,3,4,5],
                                 [0,4,2,0,4,5],
-                                [0,3,3,5,4,5],
+                                [0,3,4,5,4,5],
                                 [0,0,2,6,4,5],
                                 [0,1,2,3,5,5],
                                 [0,1,2,3,4,6],                              
@@ -173,13 +173,13 @@ def play_game_test():
     test_agent1.cash, test_agent2.cash = ENDOWMENT
     result=play_turn(test_agent1, test_agent2, [1,0], [2,0], turn=2,**params)    
     print result
-    assert result== (4,0,1,3)
+    assert result== (2,2,1,1)
     
 
     result=play_game(test_agent1, test_agent2,  3, "", **params)
     assert isinstance(result, tuple)
     print result
-    assert result== (2,1.0/3,2.0/3,5.0/3)
+    assert result== (7.0/3,1,2.0/3,3.0/3)
     
         # test 2- sequence should be: 2->,<-3  ,   0->,<-0  ,  3->,<-4
     test_agent2.cash, test_agent1.cash = ENDOWMENT
@@ -195,12 +195,12 @@ def play_game_test():
     test_agent2.cash, test_agent1.cash = ENDOWMENT
     result=play_turn(test_agent2, test_agent1, [0,2], [0,3], turn=2,**params)    
     print result
-    assert result== (4,2,2,4)
+    assert result== (3,3,2,3)
     
-    result=play_game(test_agent1, test_agent2,  3, "", **params)
+    result=play_game( test_agent2, test_agent1, 3, "", **params)
     assert isinstance(result, tuple)
     print result
-    assert result== (3,5.0/3,4.0/3,7.0/3)
+    assert result== (8.0/3,6.0/3,4.0/3,6.0/3)
     
     
     

@@ -70,7 +70,7 @@ class Agent(object):
                 # print opponent_history
                 opponent_history_padded = list(opponent_history) + [-1 for _ in range(MEMORY-len(opponent_history))]
             if len(opponent_history) > MEMORY:
-                opponent_history_padded =opponent_history[:MEMORY]
+                opponent_history_padded =opponent_history[MEMORY-1:]
             
             print opponent_history
             print opponent_history_padded
@@ -88,7 +88,7 @@ class Agent(object):
             #print output
 
             if type:
-                result = opponent_history[0] * B + 1
+                result = opponent_history[-1] * B + 1
 
                 # this whole loop just makes sure you can create money if your 
                 # partner was stingy
