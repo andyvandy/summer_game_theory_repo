@@ -64,23 +64,24 @@ class Agent(object):
             else:
                 genome=self.genome_a
                 genome_partner_shape = self.genome_b.shape
-
+            
+            opponent_history_padded=opponent_history
             if len(opponent_history) < MEMORY:
                 # print opponent_history
-                opponent_history = list(opponent_history) + [0 for _ in range(8)]
-
+                opponent_history_padded = list(opponent_history) + [-1 for _ in range(8)]
+            
             #print opponent_history
             #print genome.shape
 
             input_vector = np.transpose(np.matrix([int(bool(
-                                        i == opponent_history[(MEMORY * i) / 
+                                        i == opponent_history_padded[(MEMORY *(MEMORY -i-1)) / 
                                         genome.shape[1]])) 
                                         for i in range(genome.shape[1])]))
 
             #print input_vector.shape
 
             output=list(genome*input_vector)
-
+            print output    
             #print output
 
             if type:
@@ -88,17 +89,17 @@ class Agent(object):
 
                 # this whole loop just makes sure you can create money if your 
                 # partner was stingy
-                while result > ENDOWMENT[1] * B: 
+                while result > opponent_history[-1] * B: 
                     max_weight = max(output)
-                    # print max_weight
+                    print max_weight
                     result = output.index(max_weight)
                     # to remove that one from the running in case it is too big
                     output[result] -= max_weight 
-
+                    print result
                 return result    
             else:
                 max_weight = max(output)
-                # print max_weight
+                print max_weight
                 result = output.index(max_weight)
                 return result  
         else:
