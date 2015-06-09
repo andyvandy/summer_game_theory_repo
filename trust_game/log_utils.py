@@ -5,6 +5,9 @@ import os
 
 def ensure_directory(directory):
     """Ensures that directory exists and is empty. Be careful with this.
+    Code used from: 
+    http://stackoverflow.com/questions/185936/delete-folder-contents-in-python
+    http://stackoverflow.com/questions/273192/in-python-check-if-a-directory-exists-and-create-it-if-necessary
 
     Args:
         directory: the directory to create/clear
