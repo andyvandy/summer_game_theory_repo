@@ -52,7 +52,7 @@ def main():
         # Mutates the agents if necessary.  
         if i:
             agent_list.sort(key = lambda x: x.score, reverse = True)
-            agent_list = mutate_agents(agent_list, **params)
+            agent_list = mutate_agents(agent_list, i, **params)
 
         for k in range(ROUNDS):
             if params["LOG"]:
