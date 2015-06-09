@@ -57,6 +57,7 @@ class Agent(object):
         MEMORY= params['MEMORY']
         B=params['B']
         
+        
         if opponent_history != []:
             if type:
                 genome = self.genome_b
@@ -70,21 +71,22 @@ class Agent(object):
                 # print opponent_history
                 opponent_history_padded = list(opponent_history) + [-1 for _ in range(MEMORY-len(opponent_history))]
             if len(opponent_history) > MEMORY:
-                opponent_history_padded =opponent_history[MEMORY-1:]
+                #debug print MEMORY
+                opponent_history_padded =opponent_history[-MEMORY:]
             
-            print opponent_history
-            print opponent_history_padded
-            print genome.shape
+            #debug print opponent_history
+            #debug print opponent_history_padded
+            #debug print genome.shape
 
             input_vector = np.transpose(np.matrix([int(bool(
                                         i%(genome.shape[1]/MEMORY) == opponent_history_padded[-(MEMORY *i / 
                                         genome.shape[1])])) 
                                         for i in range(genome.shape[1])]))
 
-            print input_vector
-            print input_vector.shape
+            #debug print input_vector
+            #debug print input_vector.shape
             output=list(genome*input_vector)
-            print output    
+            #debug print output    
             #print output
 
             if type:
@@ -94,15 +96,15 @@ class Agent(object):
                 # partner was stingy
                 while result > opponent_history[-1] * B: 
                     max_weight = max(output)
-                    print max_weight
+                    #debug print max_weight
                     result = output.index(max_weight)
                     # to remove that one from the running in case it is too big
                     output[result] -= max_weight 
-                    print result
+                    #debug print result
                 return result    
             else:
                 max_weight = max(output)
-                print max_weight
+                #debug print max_weight
                 result = output.index(max_weight)
                 return result  
         else:
