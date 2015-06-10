@@ -117,15 +117,17 @@ def write_turn_info(log_file, turn_number, investor_ID, trustee_ID,
     log_file.write(".\n")
 
 
-def write_summary_json(json_file, params):
+def write_summary_json(json_file, params, summary_statistics):
     """Writes the parameters and summary statistics into a .json file
 
     Args:
         json_file: the json file object to write to
         params: the parameters used for the simulation
+        summary_statistics: summary statistics for the simulation
     """
 
-    params_json = json.dumps(params, sort_keys = True, indent=4, 
+    log_data = {"parameters": params, "summary_statistics": summary_statistics}
+    params_json = json.dumps(log_data, sort_keys = True, indent = 4, 
                              separators = (',', ': '))
 
     json_file.write(params_json) 

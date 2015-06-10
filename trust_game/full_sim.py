@@ -96,9 +96,15 @@ def main():
 
     print "The simulation has completed."
 
-    # Log params
+    # Log params, summary statistics
+    summary_statistics = (avgscore, 
+                          avg_gift_a, 
+                          avg_gift_b, 
+                          avg_score_a, 
+                          avg_score_b)
+
     json_file = open(os.path.join(params["LOG_DIR"], "data.json"), 'w')
-    write_summary_json(json_file, params)
+    write_summary_json(json_file, params, summary_statistics)
     json_file.close()
 
     print "Generating plot..."
