@@ -54,7 +54,7 @@ def main():
         if i:
             agent_list.sort(key = lambda x: x.score, reverse = True)
             agent_list = mutate_agents(agent_list, i, **params)
-
+        total_turns =0
         for k in range(ROUNDS):
             if params["LOG"]:
                 write_round_number(log_file, k)
@@ -63,7 +63,7 @@ def main():
             # maximum at the 95th percentile
             turns = min(int(round(r.expovariate(theta))) + 1, 
                         max_turns)
-            
+            total_turns += turns
             for j in xrange(0, len(agent_list), 2):
                 if params["LOG"]:
                     write_matchup_header(log_file, j / 2, agent_list[j].ID, 
@@ -72,15 +72,15 @@ def main():
                 game_stats = play_game(agent_list[j], agent_list[j + 1],
                                        turns = turns, log_file = log_file, 
                                        **params)
-
+            
                 if params["LOG"]:
                     log_file.write("\n")
+                    
+            avgscore.append(sum([x.score for x in agent_list])/float(NUMBER_OF_AGENTS*2))
+            avg_gift_a.append(sum([x.total_a_gifts for x in agent_list])/float(NUMBER_OF_AGENTS*total_turns))
+            avg_gift_b.append(sum([x.total_b_gifts for x in agent_list])/float(NUMBER_OF_AGENTS*total_turns))
 
-                '''agent_list[j].score += game_score[0]
-                agent_list[j + 1].score += game_score[1]
-                agent_list[j].avg_gift += game_score[2]
-                agent_list[j].avg_gift += game_score[3]'''
-
+            
         if GENERATIONS % 1 == 0:
                 print i+1, "generations complete."
 
