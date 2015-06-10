@@ -75,6 +75,9 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
     agent_2_avg_score = np.mean(agent_2_scores)
     agent_1.score += sum(agent_1_scores)
     agent_2.score += sum(agent_1_scores)
+    agent_1.total_a_gifts += sum(agent_1_gifts)
+    agent_2.total_b_gifts += sum(agent_2_gifts)
+    
     
     game_stats = (agent_1_avg_score, 
                   agent_2_avg_score, 
