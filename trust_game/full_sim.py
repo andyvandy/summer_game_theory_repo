@@ -64,7 +64,7 @@ def main():
             turns = min(int(round(r.expovariate(theta))) + 1, 
                         max_turns)
             
-            for j in xrange(0, NUMBER_OF_AGENTS, 2):
+            for j in xrange(0, len(agent_list), 2):
                 if params["LOG"]:
                     write_matchup_header(log_file, j / 2, agent_list[j].ID, 
                                          agent_list[j + 1].ID)
