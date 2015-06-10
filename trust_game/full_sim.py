@@ -76,9 +76,12 @@ def main():
                 if params["LOG"]:
                     log_file.write("\n")
                     
-            avgscore.append(sum([x.score for x in agent_list])/float(NUMBER_OF_AGENTS*2))
-            avg_gift_a.append(sum([x.total_a_gifts for x in agent_list])/float(NUMBER_OF_AGENTS*total_turns))
-            avg_gift_b.append(sum([x.total_b_gifts for x in agent_list])/float(NUMBER_OF_AGENTS*total_turns))
+            avgscore.append(sum([x.score for x in agent_list]) / 
+                            float(NUMBER_OF_AGENTS * 2))
+            avg_gift_a.append(sum([x.total_a_gifts for x in agent_list]) / 
+                              float(NUMBER_OF_AGENTS * total_turns))
+            avg_gift_b.append(sum([x.total_b_gifts for x in agent_list]) / 
+                              float(NUMBER_OF_AGENTS * total_turns))
 
             
         if GENERATIONS % 1 == 0:
