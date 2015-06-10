@@ -30,7 +30,7 @@ def main():
             "RESET" : RESET, 
             "MEMORY" : MEMORY,
             "LOG" : LOG,
-            "LOG_DIR" : os.path.join("output", "logs", LOG_DIR),
+            "LOG_DIR" : os.path.join("output", LOG_DIR, "logs"),
             "ENDOWMENT" : ENDOWMENT,
             "MUTATION_PARAMS" : MUTATION_PARAMS,
             }
@@ -88,6 +88,12 @@ def main():
             log_file.close()
 
     print "The simulation has completed."
+
+    # Log params
+    json_file = open(os.path.join(params["LOG_DIR"], "data.json"), 'w')
+    write_summary_json(json_file, params)
+    json_file.close()
+
     print "Generating plot..."
 
 if __name__=="__main__":

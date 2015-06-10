@@ -1,7 +1,7 @@
 # log_utils.py
 # Contains functions for building log files
 
-import os
+import os, json
 
 def ensure_directory(directory):
     """Ensures that directory exists and is empty. Be careful with this.
@@ -115,3 +115,17 @@ def write_turn_info(log_file, turn_number, investor_ID, trustee_ID,
     log_file.write(" receives ")
     log_file.write(str(trustee_gift * C))
     log_file.write(".\n")
+
+
+def write_summary_json(json_file, params):
+    """Writes the parameters and summary statistics into a .json file
+
+    Args:
+        json_file: the json file object to write to
+        params: the parameters used for the simulation
+    """
+
+    params_json = json.dumps(params, sort_keys = True, indent=4, 
+                             separators = (',', ': '))
+
+    json_file.write(params_json) 
