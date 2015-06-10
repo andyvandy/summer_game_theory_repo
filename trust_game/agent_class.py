@@ -2,6 +2,7 @@ import random as r
 from scipy import special
 import numpy as np
 
+DEBUG=True
 
 class Agent(object):
     """This class defines a game playing agent.
@@ -72,27 +73,29 @@ class Agent(object):
             opponent_history_padded=opponent_history
             if len(opponent_history) < MEMORY:
                 # print opponent_history
-                opponent_history_padded = list(opponent_history) + [-1 for _ in range(MEMORY-len(opponent_history))]
-            if len(opponent_history) > MEMORY:
-                #debug print MEMORY
-                opponent_history_padded =opponent_history[-MEMORY:]
+                opponent_history_padded = list(opponent_history)[::-1] + [-1 for _ in range(MEMORY-len(opponent_history))] 
+            elif len(opponent_history) > MEMORY:
+                if DEBUG: print MEMORY
+                opponent_history_padded =opponent_history[:-MEMORY-1:-1]
+            else: opponent_history_padded =opponent_history[::-1]
             
-            #debug print opponent_history
-            #debug print opponent_history_padded
-            #debug print genome.shape
+            
+            if DEBUG: print opponent_history
+            if DEBUG: print opponent_history_padded
+            if DEBUG: print genome.shape
 
             input_vector = np.transpose(np.matrix([int(bool(
-                                        i%(genome.shape[1]/MEMORY) == opponent_history_padded[-(MEMORY *i / 
-                                        genome.shape[1])])) 
+                                        i%(genome.shape[1]/MEMORY) == opponent_history_padded[(MEMORY *i) / 
+                                        genome.shape[1]]))
                                         for i in range(genome.shape[1])]))
 
-            #debug print input_vector
-            #debug print input_vector.shape
+            if DEBUG: print input_vector
+            if DEBUG: print input_vector.shape
             #output=list(genome*input_vector)
             output_matrix=list(genome*input_vector)
             output = [x.item(0) for x in output_matrix ]
             #np.matrix(output).tolist()
-            #debug print output    
+            if DEBUG: print output    
             #print output
 
             if type:
@@ -105,7 +108,7 @@ class Agent(object):
                     dummy+=1
                     max_weight = max(output)
                     
-                    #debug print max_weight
+                    if DEBUG: print max_weight
                     result = output.index(max_weight)
                     '''if dummy >100: 
                         print bool(result > opponent_history[-1] * B)
@@ -118,11 +121,11 @@ class Agent(object):
                         pause=raw_input("pause")'''
                     # to remove that one from the running in case it is too big
                     output[result] = output[result]-100
-                    #debug print result
+                    if DEBUG: print result
                 return result    
             else:
                 max_weight = max(output)
-                #debug print max_weight
+                if DEBUG: print max_weight
                 result = output.index(max_weight)
                 return result  
         else:

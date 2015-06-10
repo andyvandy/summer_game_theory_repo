@@ -181,13 +181,13 @@ def play_game_test():
     test_agent1.cash, test_agent2.cash = ENDOWMENT
     result=play_turn(test_agent1, test_agent2, [1,0], [2,0], turn=2,**params)    
     print result
-    assert result== (2,2,1,1)
+    assert result== (3,3,2,3)
     
 
     result=play_game(test_agent1, test_agent2,  3, "", **params)
     assert isinstance(result, tuple)
     print result
-    assert result== (7.0/3,3.0/3,2.0/3,3.0/3)
+    assert result== (8.0/3,4.0/3,3.0/3,5.0/3)
     
         # test 2- sequence should be: 2->,<-3  ,   0->,<-0  ,  3->,<-4
     test_agent2.cash, test_agent1.cash = ENDOWMENT
@@ -219,4 +219,4 @@ def play_game_test():
         sys.exit("")
         
         
-#play_game_test()      
+play_game_test()      
