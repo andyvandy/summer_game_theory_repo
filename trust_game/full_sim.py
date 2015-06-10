@@ -30,7 +30,7 @@ def main():
             "RESET" : RESET, 
             "MEMORY" : MEMORY,
             "LOG" : LOG,
-            "LOG_DIR" : os.path.join("output", LOG_DIR, "logs"),
+            "LOG_DIR" : os.path.join("output", SIM_NAME, "logs"),
             "ENDOWMENT" : ENDOWMENT,
             "MUTATION_PARAMS" : MUTATION_PARAMS,
             }
