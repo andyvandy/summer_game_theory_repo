@@ -97,11 +97,11 @@ def main():
     print "The simulation has completed."
 
     # Log params, summary statistics
-    summary_statistics = (avgscore, 
-                          avg_gift_a, 
-                          avg_gift_b, 
-                          avg_score_a, 
-                          avg_score_b)
+    summary_statistics = {"avg_score": avgscore, 
+                          "avg_gift_a": avg_gift_a, 
+                          "avg_gift_b": avg_gift_b, 
+                          "avg_score_a": avg_score_a, 
+                          "avg_score_b": avg_score_b}
 
     json_file = open(os.path.join(params["LOG_DIR"], "data.json"), 'w')
     write_summary_json(json_file, params, summary_statistics)
