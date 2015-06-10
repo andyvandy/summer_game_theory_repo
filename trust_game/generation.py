@@ -90,21 +90,20 @@ def mutate_agents(agent_list, generation, **params):
     """
     
     MUTATION_PARAMS= params["MUTATION_PARAMS"]
-
     new_agent_list = []
     
     for i in range(MUTATION_PARAMS[0]):
         new_agent_list.append(agent_list[i])
         new_agent_list.append(create_offspring(agent_list[i], generation, i, 
                               **params))
-    
-    for i in range(MUTATION_PARAMS[0], MUTATION_PARAMS[1]):
+    #print len(new_agent_list)
+    for i in range(MUTATION_PARAMS[1]):
         new_agent_list.append(agent_list[i])
-    
+    #print len(new_agent_list)
     params['NUMBER_OF_AGENTS'] = 1
-    for i in range(MUTATION_PARAMS[0], MUTATION_PARAMS[1]):
+    for i in range(MUTATION_PARAMS[2]):
         new_agent_list.append(init_agents(**params))
-
+    #print len(new_agent_list)
     return new_agent_list
     
     

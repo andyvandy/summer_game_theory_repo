@@ -106,7 +106,7 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     C = params['C']
     
     investor_gift = investor.gift(turn, trustee_history, type = 0,**params) #turn isn't used any more in the gift function -a
-    if investor_gift: print investor_gift
+    #if investor_gift: print investor_gift
     
     investor_history.append( investor_gift)
     investor_score = investor.cash - investor_gift
