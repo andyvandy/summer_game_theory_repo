@@ -42,6 +42,7 @@ def main():
 
     agent_list = create_initial_agents(**params)
 
+    avgscore,avg_gift_a,avg_gift_b,avg_score_a,avg_score_b=[],[],[],[],[]
     for i in range(GENERATIONS):
         if params["LOG"]:
             log_file = open(os.path.join(params["LOG_DIR"], 
@@ -76,13 +77,16 @@ def main():
                 if params["LOG"]:
                     log_file.write("\n")
                     
-            avgscore.append(sum([x.score for x in agent_list]) / 
-                            float(NUMBER_OF_AGENTS * 2))
-            avg_gift_a.append(sum([x.total_a_gifts for x in agent_list]) / 
-                              float(NUMBER_OF_AGENTS * total_turns))
-            avg_gift_b.append(sum([x.total_b_gifts for x in agent_list]) / 
-                              float(NUMBER_OF_AGENTS * total_turns))
-
+        avgscore.append(sum([x.score for x in agent_list]) / 
+                        float(NUMBER_OF_AGENTS * 2 * total_turns))
+        avg_gift_a.append(sum([x.total_a_gifts for x in agent_list]) / 
+                          float(NUMBER_OF_AGENTS * total_turns))
+        avg_gift_b.append(sum([x.total_b_gifts for x in agent_list]) / 
+                          float(NUMBER_OF_AGENTS * total_turns))
+        avg_score_a.append(sum([x.score_a for x in agent_list]) / 
+                          float(NUMBER_OF_AGENTS * total_turns))
+        avg_score_b.append(sum([x.score_b for x in agent_list]) / 
+                          float(NUMBER_OF_AGENTS * total_turns))
             
         if GENERATIONS % 1 == 0:
                 print i+1, "generations complete."

@@ -22,6 +22,8 @@ class Agent(object):
         self.parent_ID = parent_ID
         self.cash = 0 
         self.score = 0
+        self.score_a=0
+        self.score_b=0
         self.total_a_gifts=0
         self.total_b_gifts=0
 
