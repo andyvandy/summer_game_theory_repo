@@ -4,7 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import seaborn as sns
 import pandas as pd
-import json  
+import json
+import os
 
 import sys
 
@@ -17,7 +18,7 @@ def grapher(SIM_NAME):
     ensure_directory(plots_path)
 
     # plot 1
-    avg_turn_score_df=pd.io.json.read_json(path+"avg_score.json")
+    avg_turn_score_df=pd.io.json.read_json(os.path.join(data_path, "avg_score.json"))
     generations,simulations=avg_turn_score_df.shape
     
     avg_turn_score_df=avg_turn_score_df.sort() 
