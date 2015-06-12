@@ -17,4 +17,4 @@ MEMORY = 4    # How far back the agents remember
 # (# breed, # live but not breed, # newcommers)
 MUTATION_PARAMS= (14,8,0)    
 
-# For all or nothing, set A = B, ENDOWMENT = (1, 0
+# For all or nothing, set A = B, ENDOWMENT = (1, 0)

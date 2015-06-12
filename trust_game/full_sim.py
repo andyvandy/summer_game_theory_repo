@@ -116,7 +116,7 @@ def main():
     json_file = open(os.path.join(params["LOG_DIR"], "data.json"), 'w')
     write_summary_json(json_file, params)
     json_file.close()
-    write_stats_json(summary_statistics,LOG_DIR)
+    write_stats_json(summary_statistics,params["LOG_DIR"])
     
     print "Generating plot..."
 

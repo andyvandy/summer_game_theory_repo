@@ -140,7 +140,7 @@ def write_stats_json(summary_statistics,LOG_DIR):
         params: the parameters used for the simulation
         
     """   
-    for (key,value) in summary_statistics:
+    for (key,value) in summary_statistics.iteritems():
         json_file = open(os.path.join(LOG_DIR, key+".json"), 'w')
         params_json = json.dumps({key:value}, sort_keys = True, indent = 4, 
                              separators = (',', ': '))
