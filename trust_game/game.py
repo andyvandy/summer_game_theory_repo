@@ -106,6 +106,7 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
                                          investor_gift_fraction, 
                                          trustee_gift_fraction)
     """
+
     A = params['A']
     B = params['B']
     C = params['C']
@@ -140,7 +141,7 @@ def play_game_test():
     
     #initialize test params
     params={
-            
+            "A":1,
             "B":3,
             "C":1,
             "SWAP" : False, 
@@ -219,6 +220,7 @@ def play_game_test():
     except:
         sys.exit("")
         
-        
+
 if __name__=="__main__":
     play_game_test()      
+

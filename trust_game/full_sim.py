@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as pyplot
 import seaborn as sns
 import os
+import random as r
 
 # Imports from local files
 from game import *
@@ -30,7 +31,7 @@ def main():
             "RESET" : RESET, 
             "MEMORY" : MEMORY,
             "LOG" : LOG,
-            "LOG_DIR" : os.path.join("output", LOG_DIR, "logs"),
+            "LOG_DIR" : os.path.join("output", SIM_NAME, "logs"),
             "ENDOWMENT" : ENDOWMENT,
             "MUTATION_PARAMS" : MUTATION_PARAMS,
             }
@@ -55,8 +56,10 @@ def main():
         if i:
             agent_list.sort(key = lambda x: x.score, reverse = True)
             agent_list = mutate_agents(agent_list, i, **params)
-        total_turns =0
-        for k in range(ROUNDS):
+
+        total_turns = 0
+
+        for k in range(ROUNDS / 2):
             if params["LOG"]:
                 write_round_number(log_file, k)
 
@@ -64,7 +67,11 @@ def main():
             # maximum at the 95th percentile
             turns = min(int(round(r.expovariate(theta))) + 1, 
                         max_turns)
+
             total_turns += turns
+
+            r.shuffle(agent_list)
+
             for j in xrange(0, len(agent_list), 2):
                 if params["LOG"]:
                     write_matchup_header(log_file, j / 2, agent_list[j].ID, 
@@ -73,7 +80,10 @@ def main():
                 game_stats = play_game(agent_list[j], agent_list[j + 1],
                                        turns = turns, log_file = log_file, 
                                        **params)
-            
+                game_stats = play_game(agent_list[j + 1], agent_list[j],
+                                       turns = turns, log_file = log_file, 
+                                       **params)
+                
                 if params["LOG"]:
                     log_file.write("\n")
                     
