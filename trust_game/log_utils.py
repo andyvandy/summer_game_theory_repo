@@ -133,7 +133,7 @@ def write_summary_json(json_file, params):
     json_file.write(params_json) 
     
 def write_stats_json(summary_statistics,LOG_DIR):
-    """Writes the parameters into a .json file
+    """Writes the stats into a .json file
 
     Args:
         json_file: the json file object to write to
@@ -144,6 +144,7 @@ def write_stats_json(summary_statistics,LOG_DIR):
         json_file = open(os.path.join(LOG_DIR, key+".json"), 'w')
         params_json = json.dumps({key:value}, sort_keys = True, indent = 4, 
                              separators = (',', ': '))
+        json_file.write(params_json)
         json_file.close()
         
     
