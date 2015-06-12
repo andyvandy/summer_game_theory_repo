@@ -158,4 +158,5 @@ def generation_test_cases():
     
     print "test pass!"
     
-#generation_test_cases():
+if __name__=="__main__":
+    generation_test_cases()

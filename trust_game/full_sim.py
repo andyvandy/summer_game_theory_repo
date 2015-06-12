@@ -104,9 +104,10 @@ def main():
                           "avg_score_b": avg_score_b}
 
     json_file = open(os.path.join(params["LOG_DIR"], "data.json"), 'w')
-    write_summary_json(json_file, params, summary_statistics)
+    write_summary_json(json_file, params)
     json_file.close()
-
+    write_stats_json(summary_statistics,LOG_DIR)
+    
     print "Generating plot..."
 
 if __name__=="__main__":

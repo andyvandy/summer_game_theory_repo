@@ -2,7 +2,7 @@ import random as r
 from scipy import special
 import numpy as np
 
-DEBUG=True
+DEBUG=False
 
 class Agent(object):
     """This class defines a game playing agent.

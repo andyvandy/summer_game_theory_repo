@@ -220,4 +220,5 @@ def play_game_test():
         sys.exit("")
         
         
-play_game_test()      
+if __name__=="__main__":
+    play_game_test()      
