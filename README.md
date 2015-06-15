@@ -52,5 +52,27 @@ Here is an example using the  <a href="//commons.wikimedia.org/w/index.php?title
 
 TODO
 
+## Iterated Trust Game
 
+##### How to use
 
+The main file is full_sim.py, and the settings are stored in trust_config.py.
+
+Data from the simulations will be saved in the output/sim_name directory in 
+json files. You can run grapher.py to generate plots of the data.
+
+##### Required packages:
+	-numpy
+	-matplotlib
+	-seaborn
+
+##### Model basics
+
+Investor plays trustee, investor takes the first turn. Chooses a: [0, a_endowment].
+Investor gives a to trustee, keeping (1 - a)*A for themselves.
+Trustee receives B*a, and returns f(a) : [0, B*a] to investor, keeping
+B*a - f(a) for themselves. Investor then receives C*f(a), leaving them with a total of (1 - a)*A + C*f(a).
+
+This game is iterated over a random number of turns. Players may or may not 
+switch positions between each turn. Each round has players matched up randomly, and it is
+currently guaranteed that players will play an equal number of games in each role.
