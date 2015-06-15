@@ -58,7 +58,8 @@ def main():
             agent_list = mutate_agents(agent_list, i, **params)
 
         total_turns = 0
-
+        for agent in agent_list:
+            agent.score=0
         for k in range(ROUNDS / 2):
             if params["LOG"]:
                 write_round_number(log_file, k)

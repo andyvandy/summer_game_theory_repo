@@ -2,8 +2,8 @@
 
 W = 0.95    # Probability that the game goes on another turn
 NUMBER_OF_AGENTS = 36
-GENERATIONS = 3
-ROUNDS = 100   # Matchups per generation
+GENERATIONS = 30
+ROUNDS = 5  # Matchups per generation
 ENDOWMENT = (1, 0)    # How much each player receives at the start of the game
 A = 10    # Multiplier for Investor balance after Investor -> Trustee gift
 B = 30    # Multiplier for Investor -> Trustee

@@ -14,10 +14,11 @@ def grapher(SIM_NAME):
     data_path= os.path.join("output", SIM_NAME, "logs")
     plots_path= os.path.join("output", SIM_NAME, "logs")
 
-    ensure_directory(data_path) # make sure the directories exist
-    ensure_directory(plots_path)
+    #ensure_directory(data_path) # make sure the directories exist
+    #ensure_directory(plots_path) 
+    # omg the above functions were emptying the directories...
 
-    # plot 1
+    # plot 1 - avg score
     avg_turn_score_df=pd.io.json.read_json(os.path.join(data_path, "avg_score.json"))
     generations,simulations=avg_turn_score_df.shape
     
@@ -30,6 +31,59 @@ def grapher(SIM_NAME):
     plt.ylabel('Average score per turn')
     plt.title('Distribution of Average Scores per Turn')
     plt.savefig(plots_path+"avg_turn_score.png") 
+    
+    plt.clf()
+    plt.cla()
+    
+    #plot 2 -avg gifts
+    
+    avg_gift_a_df=pd.io.json.read_json(os.path.join(data_path, "avg_gift_a.json"))
+    avg_gift_b_df=pd.io.json.read_json(os.path.join(data_path, "avg_gift_b.json"))
+
+    generations,simulations=avg_turn_score_df.shape
+    
+    avg_gift_a_df=avg_gift_a_df.sort() 
+    avg_gift_b_df=avg_gift_b_df.sort() 
+
+    sns.set(style = "darkgrid", palette = "muted",rc={"lines.linewidth":1})
+    fig = plt.subplots(1, 1, figsize = (16, 12))
+    b, g, r, p = sns.color_palette("muted", 4)
+    plt.plot(range(generations), avg_gift_a_df, color=p, alpha=1)
+    plt.plot(range(generations), avg_gift_b_df, color=g, alpha=1)
+
+    plt.xlabel('Generation')
+    plt.ylabel('Average score per turn')
+    plt.title('Distribution of Average Scores per Turn')
+    plt.savefig(plots_path+"avg_respective_gift.png") 
+    
+    plt.clf()
+    plt.cla()
+    
+    
+    #plot 3- respective avg scores
+
+    avg_score_a_df=pd.io.json.read_json(os.path.join(data_path, "avg_score_a.json"))
+    avg_score_b_df=pd.io.json.read_json(os.path.join(data_path, "avg_score_b.json"))
+
+    generations,simulations=avg_turn_score_df.shape
+    
+    avg_score_a_df=avg_score_a_df.sort()
+    avg_score_b_df=avg_score_b_df.sort() 
+
+    sns.set(style = "darkgrid", palette = "muted",rc={"lines.linewidth":1})
+    fig = plt.subplots(1, 1, figsize = (16, 12))
+    b, g, r, p = sns.color_palette("muted", 4)
+    plt.plot(range(generations), avg_score_a_df, color=p, alpha=1)
+    plt.plot(range(generations), avg_score_b_df, color=g, alpha=1)
+
+    plt.xlabel('Generation')
+    plt.ylabel('Average score per turn')
+    plt.title('Distribution of Average Scores per Turn')
+    plt.savefig(plots_path+"avg_respective_score.png") 
+    
+    plt.clf()
+    plt.cla()
+   
     
 
 if __name__=="__main__":
