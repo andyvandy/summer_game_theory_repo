@@ -60,6 +60,10 @@ def main():
         total_turns = 0
         for agent in agent_list:
             agent.score=0
+            agent.score_a=0
+            agent.score_b=0
+            agent.total_a_gifts=0
+            agent.total_b_gifts=0
         for k in range(ROUNDS / 2):
             if params["LOG"]:
                 write_round_number(log_file, k)
@@ -69,7 +73,7 @@ def main():
             turns = min(int(round(r.expovariate(theta))) + 1, 
                         max_turns)
 
-            total_turns += turns
+            total_turns += 2*turns # have to make sure that this is updated to keep up with the ft that the rounds are double now
 
             r.shuffle(agent_list)
 

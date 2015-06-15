@@ -53,7 +53,7 @@ def grapher(SIM_NAME):
 
     plt.xlabel('Generation')
     plt.ylabel('Average score per turn')
-    plt.title('Distribution of Average Scores per Turn')
+    plt.title('Distribution of Average gifts per Turn')
     plt.savefig(plots_path+"avg_respective_gift.png") 
     
     plt.clf()
@@ -77,7 +77,7 @@ def grapher(SIM_NAME):
     plt.plot(range(generations), avg_score_b_df, color=g, alpha=1)
 
     plt.xlabel('Generation')
-    plt.ylabel('Average score per turn')
+    plt.ylabel('Average score per turn by Player Role')
     plt.title('Distribution of Average Scores per Turn')
     plt.savefig(plots_path+"avg_respective_score.png") 
     
