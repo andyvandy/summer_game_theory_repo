@@ -72,11 +72,11 @@ def main():
             # maximum at the 95th percentile
             turns = min(int(round(r.expovariate(theta))) + 1, 
                         max_turns)
+          
 
             total_turns += 2*turns # have to make sure that this is updated to keep up with the ft that the rounds are double now
 
             r.shuffle(agent_list)
-
             for j in xrange(0, len(agent_list), 2):
                 if params["LOG"]:
                     write_matchup_header(log_file, j / 2, agent_list[j].ID, 
@@ -91,7 +91,9 @@ def main():
                 
                 if params["LOG"]:
                     log_file.write("\n")
-                    
+         
+               
+            
         avgscore.append(sum([x.score for x in agent_list]) / 
                         float(NUMBER_OF_AGENTS * 2 * total_turns))
         avg_gift_a.append(sum([x.total_a_gifts for x in agent_list]) / 

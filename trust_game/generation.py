@@ -58,7 +58,7 @@ def create_offspring(agent, generation, pos, **params):
     intial_genome_b = agent.genome_b + np.random.randint(-15, 16, 
                                                          genome_b_shape)
 
-    return Agent(intial_genome_a, intial_genome_b, ID = new_ID, 
+    return Agent(intial_genome_a, intial_genome_b, initial_gift=0, ID = new_ID, 
                  parent_ID = agent.ID, **params)
     
 
@@ -98,7 +98,7 @@ def mutate_agents(agent_list, generation, **params):
                               **params))
     #print len(new_agent_list)
     for i in range(MUTATION_PARAMS[1]):
-        new_agent_list.append(agent_list[i])
+        new_agent_list.append(agent_list[MUTATION_PARAMS[0]+i])
     #print len(new_agent_list)
     params['NUMBER_OF_AGENTS'] = 1
     for i in range(MUTATION_PARAMS[2]):

@@ -37,6 +37,7 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
     trustee_ID = agent_2.ID
 
     for turn in range(turns):
+        agent_1.cash, agent_2.cash = ENDOWMENT
         if SWAP and turn % 2 == 1:
             turn_stats[turn] = play_turn(agent_2, agent_1, agent_2_history, 
                                          agent_1_history, turn, **params)
@@ -115,18 +116,18 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     #if investor_gift: print investor_gift
     
     investor_history.append(investor_gift)
-    investor_score = (investor.cash - investor_gift) * A
+    investor.cash = (investor.cash - investor_gift) * A
     
-    trustee_score = trustee.cash + (B * investor_gift)
+    trustee.cash = trustee.cash + (B * investor_gift)
     trustee_gift = trustee.gift(turn, investor_history, type = 1,**params)
     trustee_history.append(trustee_gift)
     #print trustee_history
-    trustee_score = trustee_score - trustee_gift
+    trustee.cash = trustee.cash - trustee_gift
 
-    investor_score = investor_score + (C * trustee_gift)
+    investor.cash = investor.cash + (C * trustee_gift)
 
-    turn_stats = (investor_score,
-                  trustee_score,
+    turn_stats = (investor.cash,
+                  trustee.cash,
                   investor_gift,
                   trustee_gift)
 
