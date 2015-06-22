@@ -125,7 +125,7 @@ def main():
     json_file.close()
     write_stats_json(summary_statistics,params["LOG_DIR"])
     
-    print "Generating plot..."
+    print "Run grapher.py SIM_NAME to generate plots."
 
 if __name__=="__main__":
     main()

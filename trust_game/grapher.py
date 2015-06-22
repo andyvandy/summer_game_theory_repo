@@ -48,11 +48,12 @@ def grapher(SIM_NAME):
     sns.set(style = "darkgrid", palette = "muted",rc={"lines.linewidth":1})
     fig = plt.subplots(1, 1, figsize = (16, 12))
     b, g, r, p = sns.color_palette("muted", 4)
-    plt.plot(range(generations), avg_gift_a_df, color=p, alpha=1)
-    plt.plot(range(generations), avg_gift_b_df, color=g, alpha=1)
+    gift_a, = plt.plot(range(generations), avg_gift_a_df, color=p, alpha=1)
+    gift_b, = plt.plot(range(generations), avg_gift_b_df, color=g, alpha=1)
 
     plt.xlabel('Generation')
-    plt.ylabel('Average score per turn')
+    plt.ylabel('Average gift per turn by Player Role')
+    plt.legend([gift_a, gift_b], ["Investors", "Trustees"])
     plt.title('Distribution of Average gifts per Turn')
     plt.savefig(plots_path+"avg_respective_gift.png") 
     
@@ -73,11 +74,12 @@ def grapher(SIM_NAME):
     sns.set(style = "darkgrid", palette = "muted",rc={"lines.linewidth":1})
     fig = plt.subplots(1, 1, figsize = (16, 12))
     b, g, r, p = sns.color_palette("muted", 4)
-    plt.plot(range(generations), avg_score_a_df, color=p, alpha=1)
-    plt.plot(range(generations), avg_score_b_df, color=g, alpha=1)
+    a_score, = plt.plot(range(generations), avg_score_a_df, color=p, alpha=1)
+    b_score, = plt.plot(range(generations), avg_score_b_df, color=g, alpha=1)
 
     plt.xlabel('Generation')
     plt.ylabel('Average score per turn by Player Role')
+    plt.legend([a_score, b_score], ["Investors", "Trustees"])
     plt.title('Distribution of Average Scores per Turn')
     plt.savefig(plots_path+"avg_respective_score.png") 
     
