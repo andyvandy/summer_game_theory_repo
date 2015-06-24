@@ -48,8 +48,8 @@ def main():
     fig = plt.subplots(1, 1, figsize=(16, 12))
     b, g, r, p = sns.color_palette("muted", 4)
     for i in range(simulations):
-        plt.plot(range(generations), avg_coop_pct_df[i], color='blue', alpha=0.01)
-        plt.plot(range(generations), avg_defect_pct_df[i], color='red', alpha=0.01)
+        plt.plot(range(generations), avg_coop_pct_df[i], color='blue', alpha=0.1)
+        plt.plot(range(generations), avg_defect_pct_df[i], color='red', alpha=0.1)
     plt.xlabel('Generation')
     plt.ylabel('Percent')
     plt.title('Percentage of cooperation vs defection')
