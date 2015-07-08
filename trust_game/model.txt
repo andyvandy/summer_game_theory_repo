@@ -1,0 +1,14 @@
+Game model so far:
+	Investor plays trustee, investor takes the first turn. Chooses a = 0 or 1.
+	Investor gives a to Agent 2, keeping 1 - a for themselves.
+	Trustee receives b*a, and returns 0 <= f(a) <= b*a to investor, keeping
+	b*a - f(a) for themselves.
+	Agent 1 then receives c*f(a), leaving them with a total of 1 - a + c*f(a).
+
+I want to iterate this game over a random number of turns. Players will not 
+switch positions between each turn.
+
+With this model in mind, I need to consider how the agents will decide on the
+proportions to give. The first gift on the first round will obviously be
+predecided. Every gift after that could potentially depend on the history of
+gifts from the other agent.
