@@ -43,7 +43,7 @@ def main():
 
     agent_list = create_initial_agents(**params)
 
-    avgscore,avg_gift_a,avg_gift_b,avg_score_a,avg_score_b=[],[],[],[],[]
+    
     for i in range(GENERATIONS):
         if params["LOG"]:
             log_file = open(os.path.join(params["LOG_DIR"], 

@@ -36,7 +36,7 @@ class Agent(object):
         self.genome_a = genome_a
         self.genome_b = genome_b
 
-    def gift(self, turn, opponent_history , type=0, **params):
+    def gift(self, opponent_history, type=0, **params):
         """Takes as input the history of the opponents moves as a list (which 
         can be empty) then this function turns that list into a vector of length 
         (#actions partner has available)*(size of memory) where for each chunk 
@@ -47,17 +47,14 @@ class Agent(object):
         with the resulting highest legal move is then chosen.
         
         Args:
-            turn: the current turn
             opponent_history: a list of the opponents previous moves (can be 
                 empty)
             type: 0 if the agent is the investor, 1 if the agent is the trustee
-            params: 
-                endowment: the initial balance of the agent
+            params:
                 memory: how many turns of the history the agent uses to decide
                     its move
                 b: the 
         """
-        ENDOWMENT= params['ENDOWMENT']
         MEMORY= params['MEMORY']
         B=params['B']
         

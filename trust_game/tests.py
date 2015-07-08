@@ -1,26 +1,43 @@
 import numpy as np
+import pandas as pd
 
 from turn_class import TrustGameTurn
 from game_class import TrustGame
 from agent_class import Agent
 
-
 def game_test(test_agent_1, test_agent_2, test_game, turns, expected_result,
               **params):
 
     result = test_game.play(test_agent_1, test_agent_2, turns, **params)
-    assert isinstance(result, tuple)
-    assert result == expected_result
+    assert isinstance(result, pd.DataFrame)
+
+    result_tuple = (np.mean(result["agent_1_score"]),
+                    np.mean(result["agent_2_score"]),
+                    np.mean(result["agent_1_action"]),
+                    np.mean(result["agent_2_action"]))
+
+    assert result_tuple == expected_result
 
 
 def turn_test(test_agent_1, test_agent_2, test_turn, test_agent_1_history, 
               test_agent_2_history, expected_result, **params):
+    
+    test_agent_1.cash, test_agent_2.cash = params["ENDOWMENT"]
 
     result = test_turn.play(test_agent_1, test_agent_2, test_agent_1_history, 
                             test_agent_2_history, **params)
 
-    assert isinstance(result, tuple)
-    assert result == expected_result
+    result_tuple = (result["agent_1_score"],
+                    result["agent_2_score"],
+                    result["agent_1_action"],
+                    result["agent_1_action"])
+
+    print expected_result
+    print result_tuple
+    print result
+
+    assert isinstance(result, pd.Series)
+    assert result_tuple == expected_result
 
 
 def play_game_test():
@@ -28,8 +45,6 @@ def play_game_test():
     params = {"A":1,
               "B":3,
               "C":1,
-              "SWAP" : False, 
-              "RESET" : False, 
               "MEMORY" : 2,
               "LOG" : False,
               "ENDOWMENT" : (2,0)}
@@ -37,9 +52,7 @@ def play_game_test():
     a = params["A"]
     b = params["B"]
     c = params["C"]
-    memory = params["MEMORY"]
     LOG = params["LOG"]
-    endowment = params["ENDOWMENT"]
 
     # Initialize test agents
 
@@ -64,19 +77,19 @@ def play_game_test():
                          initial_gift = 2, **params)
 
     # Initialize test turn
-    test_turn = TrustGameTurn(a, b, c)
+    test_turn = TrustGameTurn(**params)
 
     # Initialize test game
     test_game = TrustGame(**params)
 
     # Test 1:
-    test_agent_1.cash, test_agent_2.cash = endowment
-
     # Run turn tests
     turn_test(test_agent_1, test_agent_2, test_turn, [], [], (3, 1, 1, 2), 
               **params)
+
     turn_test(test_agent_1, test_agent_2, test_turn, [1], [2], (2, 0, 0, 0),
               **params)
+
     turn_test(test_agent_1, test_agent_2, test_turn, [1, 0], [2, 0], 
               (3, 3, 2, 3), **params)
 
@@ -85,13 +98,13 @@ def play_game_test():
               (8.0/3,4.0/3,3.0/3,5.0/3), **params)
 
     # Test 2:
-    test_agent_2.cash, test_agent_1.cash = endowment
-
     # Run turn tests
     turn_test(test_agent_2, test_agent_1, test_turn, [], [], (3, 3, 2, 3), 
               **params)
+
     turn_test(test_agent_2, test_agent_1, test_turn, [2], [3], (2, 0, 0, 0), 
               **params)
+
     turn_test(test_agent_2, test_agent_1, test_turn, [2, 0], [3, 0], (3,3,2,3), 
               **params)
 

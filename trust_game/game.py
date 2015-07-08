@@ -40,7 +40,7 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
         agent_1.cash, agent_2.cash = ENDOWMENT
         if SWAP and turn % 2 == 1:
             turn_stats[turn] = play_turn(agent_2, agent_1, agent_2_history, 
-                                         agent_1_history, turn, **params)
+                                         agent_1_history, **params)
 
             agent_1_scores[turn] = turn_stats[turn][1]
             agent_2_scores[turn] = turn_stats[turn][0]
@@ -49,7 +49,7 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
         else:
             
             turn_stats[turn] = play_turn(agent_1, agent_2,  agent_1_history, 
-                                            agent_2_history, turn, **params)
+                                            agent_2_history, **params)
             #print "hists",agent_1_history,agent_2_history
             agent_1_scores[turn] = turn_stats[turn][0]
             agent_2_scores[turn] = turn_stats[turn][1]
@@ -89,8 +89,7 @@ def play_game(agent_1, agent_2,  turns, log_file, **params):
     return game_stats
 
 
-def play_turn(investor, trustee, investor_history, trustee_history, turn, 
-              **params):
+def play_turn(investor, trustee, investor_history, trustee_history, **params):
     """Plays a single turn of the trust game between investor and trustee.
 
     Args:
@@ -99,7 +98,6 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
         c: the multiplier for the return transfer
         investor_balance, trustee_balance: starting balances for the investor 
             and trustee
-        turn: the current turn
 
     Returns:
         turn_stats: a tuple containing (investor score, 
@@ -112,14 +110,13 @@ def play_turn(investor, trustee, investor_history, trustee_history, turn,
     B = params['B']
     C = params['C']
     
-    investor_gift = investor.gift(turn, trustee_history, type = 0,**params) #turn isn't used any more in the gift function -a
-    #if investor_gift: print investor_gift
+    investor_gift = investor.gift(trustee_history, type = 0,**params) 
     
     investor_history.append(investor_gift)
     investor.cash = (investor.cash - investor_gift) * A
     
     trustee.cash = trustee.cash + (B * investor_gift)
-    trustee_gift = trustee.gift(turn, investor_history, type = 1,**params)
+    trustee_gift = trustee.gift(investor_history, type = 1,**params)
     trustee_history.append(trustee_gift)
     #print trustee_history
     trustee.cash = trustee.cash - trustee_gift

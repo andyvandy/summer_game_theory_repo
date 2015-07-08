@@ -106,7 +106,43 @@ def mutate_agents(agent_list, generation, **params):
     #print len(new_agent_list)
     return new_agent_list
     
+
+def classic_mutator():
+    """Returns mutated population from the agents in agent_list. Assumes a flat
+    population.
+
+    Args:
+        agent_list: a list of agents
+
+    Returns:
+        new_agent_list: the list of agents for the new generation
+    """
+
+    # Sort agents by score
+    agent_list.sort(key = lambda x: x.score, reverse = True)
     
+    # Get mutation params
+    MUTATION_PARAMS = params["MUTATION_PARAMS"]
+    new_agent_list = []
+
+    # Add agents that are to be carried over with offspring 
+    for i in range(MUTATION_PARAMS[0]):
+        new_agent_list.append(agent_list[i])
+        new_agent_list.append(create_offspring(agent_list[i], generation, i, 
+                              **params))
+
+    # Add agents that are to be carried over alone
+    for i in range(MUTATION_PARAMS[1]):
+        new_agent_list.append(agent_list[MUTATION_PARAMS[0] + i])
+
+    # Add completely new agents
+    params['NUMBER_OF_AGENTS'] = 1
+    for i in range(MUTATION_PARAMS[2]):
+        new_agent_list.append(init_agents(**params))
+
+    return new_agent_list
+
+
 def generation_test_cases():
     #initializing params
     params={"theta":0.05,
