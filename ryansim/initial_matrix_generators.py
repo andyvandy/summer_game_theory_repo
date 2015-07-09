@@ -78,8 +78,3 @@ def binomial_product_array(dimension, p):
     array = array / np.sum(array)
 
     return array
-
-
-plt.imshow(binomial_product_array((100,100),(0.9,0.1)), cmap=plt.cm.gray)
-plt.colorbar()
-plt.show()
