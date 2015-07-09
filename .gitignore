@@ -1,5 +1,5 @@
 # stop these things from bugging us
-.pyc
-.log
-.png
-.json
+*.pyc
+*.log
+*.png
+*.json
