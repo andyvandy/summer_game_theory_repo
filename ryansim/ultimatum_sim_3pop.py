@@ -14,8 +14,10 @@ import matplotlib.gridspec as gridspec
 import seaborn as sns
 import matplotlib
 from scipy import ndimage # for center of mass calculation
+from os import path
 
 from ultimatum_params import PARAMS
+from ultimatum_params import VIDEO_LIB_PATHS
 from initial_matrix_generators import binomial_product_array
 
 # PARAMETERS
@@ -24,8 +26,11 @@ from initial_matrix_generators import binomial_product_array
 # any OS and all parameters should be in ultimatum_params.py. Ideally we can
 # avoid global variables other than the PARAMS variable.
 
-plt.rcParams['animation.ffmpeg_path'] = 'C:/Users/Andrew/bin/ffmpeg/bin/ffmpeg'
-plt.rcParams['animation.convert_path'] = 'C:/Program Files/ImageMagick-6.9.1-Q16/convert'
+FFMPEG_PATH = VIDEO_LIB_PATHS['FFMPEG_PATH']
+CONVERT_PATH = VIDEO_LIB_PATHS['CONVERT_PATH']
+
+plt.rcParams['animation.ffmpeg_path'] = FFMPEG_PATH
+plt.rcParams['animation.convert_path'] = CONVERT_PATH
 
 # Load in params
 ROUNDS = PARAMS['ROUNDS']
@@ -138,7 +143,7 @@ def main():
     
     anim=animation.FuncAnimation(fig, lambda x: update(fig,axarr,x),interval=1, frames=ROUNDS, repeat=False)
     mywriter = animation.FFMpegWriter()
-    anim.save('C:/Users/Andrew/Documents/programs/summer game theory/ultimatum_ani_test.mp4',fps=10)
+    anim.save(path.join("output", "sim.mp4"),fps=10)
     print "jesus"
     
 def update(fig,axarr,k):
