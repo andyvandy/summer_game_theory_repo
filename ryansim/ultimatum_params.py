@@ -1,0 +1,2 @@
+PARAMS = {'GRANULARITY': 1,
+          'ROUNDS': 2000}
