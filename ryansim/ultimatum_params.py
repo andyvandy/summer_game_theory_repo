@@ -1,6 +1,10 @@
 PARAMS = {'GRANULARITY': 1,
-          'ROUNDS': 2000,
-          'STARTING_DISTRIBUTION': 'cluster'}
+          'ROUNDS': 500,
+          'STARTING_DISTRIBUTION': 'cluster',
+          'SIM_NAME': 'pre_mod_test',
+          'TEAM_SPEC': [('cluster', (0.5, 0.5)), 
+                        ('uniform',), 
+                        ('random',)]}
 
 """
 GRANULARITY: Represents how fine the strategy distribution is. Higher
@@ -14,15 +18,4 @@ STARTING_DISTRIBUTION: Determines the initial distribution of strategies.
         'uniform': uniform distribution of strategies
         'cluster': clustered strategies based on a product of binomial
             distributions
-"""
-
-# FOR WINDOWS (MODIFY TO POINT TO YOUR FFMPEG AND IMAGEMAGICK):
-
-VIDEO_LIB_PATHS = {'FFMPEG_PATH': 'C:/Users/Andrew/bin/ffmpeg/bin/ffmpeg',
-                   'CONVERT_PATH': 'C:/Program Files/ImageMagick-6.9.1-Q16/convert'}
-
-"""
-# FOR UBUNTU LINUX:
-VIDEO_LIB_PATHS = {'FFMPEG_PATH': '/usr/bin/avconv',
-                   'CONVERT_PATH': '/usr/bin/convert'}
 """
