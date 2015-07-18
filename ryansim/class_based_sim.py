@@ -23,10 +23,10 @@ import os
 
 # import local functions
 from game_logic import calc_scores, update_data
-from graphics_functions import initialize_figure, create_video_from_frames
-from graphics_functions import update_figures
+from graphics_functions_oo import initialize_figure, create_video_from_frames
+from graphics_functions_oo import update_figures
 from utility_functions import clear_directory, remove_file
-from initial_matrix_generators import initialize_starting_distribution
+from game_class import Game
 
 # Import parameters
 from ultimatum_params import PARAMS
@@ -46,41 +46,35 @@ def main():
     params['DIMENSION'] = (100 / params['GRANULARITY'] + 1)
 
     # Calculate the value of a single unit of a strategy based on uniform dist.
-    params['STARTING_PCT'] = 1.0 / (params['DIMENSION'] ** 2)
+    params['UNIT_VALUE'] = 1.0 / (params['DIMENSION'] ** 2)
 
-    # Initialize teams
-    teams = initialize_starting_distribution(**params)
+    params['NUMBER_OF_TEAMS'] = len(params['TEAM_SPEC'])
 
-    species_breakdown = [1.0 / 3.0] * 3
+    # Initialize game
+    game = Game(**params)
 
-    species_breakdown_history = [[], [], []]
-
-    # Initialize average deal data lists
-    avg_deal_data = [[], [], []]
-
-    data = teams
-
-    fig, axarr, img, cbar = initialize_figure(avg_deal_data, data, **params)
+    # Initialize plot
+    fig, axarr, img, cbar = initialize_figure(game, **params)
 
     # MAIN LOOP
     for round_number in range(params['ROUNDS']):
-        # Calculate fitness
         game.calc_scores(**params)
 
-        # Update data
-        results = game.update_data()
+        game.update_data(round_number, **params)
 
-        teams = results[0]
-        avg_deal_data = results[1]
-        species_breakdown = results[2]
-        species_breakdown_history = results[3]
-        center_of_mass = results[4]
+        print "*******************************"
+        print "round_number:", round_number
 
-        update_figures(fig, axarr, img, cbar, teams, avg_deal_data, 
-               species_breakdown_history, center_of_mass, i, **params)
+        for team in game.teams:
+            print team.stats.loc[round_number]
 
-        filename = params['SIM_NAME'] + "%04d.png" % i
-        fig.savefig(os.path.join("output", "tmp", filename), dpi=150)
+        print "*******************************"
+
+        fig, axarr, img, cbar = update_figures(fig, axarr, img, cbar, game, 
+                                               round_number, **params)
+
+        filename = params['SIM_NAME'] + "%04d.png" % round_number
+        fig.savefig(os.path.join("output", "tmp", filename), dpi=120)
 
     remove_file(os.path.join("output", "videos", params["SIM_NAME"] + ".mp4"))
 

@@ -1,10 +1,12 @@
+import numpy as np
+
 PARAMS = {'GRANULARITY': 1,
-          'ROUNDS': 500,
+          'ROUNDS': 1000,
           'STARTING_DISTRIBUTION': 'cluster',
-          'SIM_NAME': 'pre_mod_test',
-          'TEAM_SPEC': [('cluster', (0.5, 0.5)), 
-                        ('uniform',), 
-                        ('random',)]}
+          'SIM_NAME': 'clust_v_unif_test',
+          'TEAM_SPEC': [('A', 'cluster', {'p': np.random.rand(1,2)[0]}), 
+                        ('B', 'uniform', {})]
+         }
 
 """
 GRANULARITY: Represents how fine the strategy distribution is. Higher
